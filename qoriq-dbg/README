@@ -1,0 +1,66 @@
+qoriq-dbg Version 1.5
+
+Introduction:
+
+qoriq-dbg is a Linux kernel module which defines directories and files
+in the virtual Linux debugfs file system.
+These files are mapped to the various registers in the QorIQ debug IP.
+The user sees a directory structure where using normal scripting tools one
+can read and write "files" which result in the specific Debug IP registers being updated.
+
+The effect of accessing these registers is immediate and interactive. 
+This is useful as a experimenting tool for quickly discovering which registers
+need to be programmed for a specific use case.
+The use case itself can be written in any scripting/compiled language which can
+perform file system operations.
+
+Precondition:
+This module will map the QorIQ Debug registers in the DCSR memory space into files
+in the debugfs file system. The debugfs file system must be mounted on the target file system.
+
+Edit /etc/fstab and add the line below.
+debugfs /mnt/debugfs debugfs defaults 0 0
+
+On target, execute:
+	mount debugfs 
+
+This version requires that the kernel contain device tree entries for the
+DCSR based NPC trace buffer for that feature to be available.
+
+Preferred Build Method:
+To cross build from the host using the Makefile
+
+Important! Edit the Makefile to change some hardcoded path values.
+
+To cross build:
+	make
+	
+To install:
+	sudo make install  
+
+On target:
+execute this command after module (re-)installation.
+	depmod -a 
+	
+execute to load the module:
+	modprobe qoriq-dbg
+
+
+Alternative Build Method: 
+To build manually from the host execute the following commands.
+
+Important! Change the paths to reflect your Linux source and rootfs paths.
+
+make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /path/to/linux M=$PWD modules
+This will create the module (*.ko) in the source directory ($PWD).
+
+e.g. make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /home/user/bsp/ltib/rpm/BUILD/linux M=$PWD modules
+
+To install into the rootfs
+
+make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /path/to/linux INSTALL_MOD_PATH=/path/to/rootfs M=$PWD modules_install
+Installation default is in /lib/modules/<kernel-version>/extra, but must be prefixed with INSTALL_MOD_PATH
+On target execute "depmod -a" to configure the modprobe config files.
+
+e.g. make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /home/user/bsp/ltib/rpm/BUILD/linux INSTALL_MOD_PATH=/srv/nfsroot/p4080 M=$PWD modules_install
+

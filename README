@@ -1,0 +1,45 @@
+************************************************************************************
+ User notes for qoriq-debug project.
+************************************************************************************
+
+The qoriq-debug project will perform out of source builds of Linux kernel modules
+along with utility libraries and tools.
+
+A pre-requisite for the module build is access to a configured Linux source tree.
+This path to this source given to ./configure using the --with-linux option.
+
+   --with-linux=DIR        path to Linux kernel src (default=/home/root/linux)
+
+See ./configure --help for more options.
+ 
+Build the tools using the normal Linux invocation
+
+	./configure <additional options>
+	make 
+	make install
+ 
+Note: At this time ONLY in source builds are available.
+
+************************************************************************************
+ Developer notes
+************************************************************************************
+
+To rebuild the autoconfig system.
+---------------------------------
+Perform this if Makefile.am or configure.ac content changes.
+
+	./autogen.sh
+	or
+	autoreconf --force
+
+To build a release distribution
+-------------------------------
+	
+	make dist
+
+Unit testing
+------------
+Unit tests can be run on the host (with some limitations) 
+To run test suite on the library
+	
+	make check

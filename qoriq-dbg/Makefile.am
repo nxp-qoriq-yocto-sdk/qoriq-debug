@@ -1,0 +1,60 @@
+#
+# Copyright (C) 2012 Freescale Semiconductor, Inc.
+#
+# All uses are subject to a SEPARATE license agreement from Freescale Semiconductor
+# or its authorized licensees. 
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN
+# NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+# TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+SUBDIRS= \
+	module
+	
+EXTRA_DIST = \
+	module/Makefile.in \
+	module/ccsr_fman.c \
+	module/ccsr_fman.h \
+	module/ccsr_qman.c \
+	module/ccsr_qman.h \
+	module/dbg_cpu.c \
+	module/dbg_cpu.h \
+	module/dbg_device.h \
+	module/dbg_perfmon.c \
+	module/dbg_perfmon.h \
+	module/dbg_pmr_table.c \
+	module/dbg_private.h \
+	module/dbg_spr.c \
+	module/dbg_spr.h \
+	module/dbg_spr_table.c \
+	module/dcsr_corenet.c \
+	module/dcsr_corenet.h \
+	module/dcsr_ddr.c \
+	module/dcsr_ddr.h \
+	module/dcsr_dpaa.c \
+	module/dcsr_dpaa.h \
+	module/dcsr_epu.c \
+	module/dcsr_epu.h \
+	module/dcsr_nal.c \
+	module/dcsr_nal.h \
+	module/dcsr_npc.c \
+	module/dcsr_npc.h \
+	module/dcsr_npc_trace.c \
+	module/dcsr_npc_trace.h \
+	module/dcsr_nxc.c \
+	module/dcsr_nxc.h \
+	module/dcsr_ocn.c \
+	module/dcsr_ocn.h \
+	module/dcsr_rcpm.c \
+	module/dcsr_rcpm.h \
+	module/qoriq_dbg.c \
+	module/qoriq_dbg.h \
+	module/README
