@@ -59,7 +59,7 @@ ARCH = powerpc
 
 # These options used for a native build
 KERNEL_ARGS := M=$(ABDIR) ARCH=$(ARCH)
-INSTALL_ARGS := 
+INSTALL_ARGS := INSTALL_MOD_PATH=$(SYSROOT)
 
 # These options used for a cross build
 #PWD := $(shell pwd)
