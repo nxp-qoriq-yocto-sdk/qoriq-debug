@@ -147,6 +147,7 @@ static void map_devices(void)
 			&dbg_dev.npc_trace);
 	DBGFS_MAP_COMPATIBLE("fsl,dcsr-nxc", &dbg_dev.nxc);
 	DBGFS_MAP_COMPATIBLE("fsl,dcsr-ocn", &dbg_dev.ocn);
+	DBGFS_MAP_COMPATIBLE("fsl,bman", &dbg_dev.bman);
 	DBGFS_MAP_COMPATIBLE("fsl,qman", &dbg_dev.qman);
 	DBGFS_MAP_COMPATIBLE("fsl,dcsr-rcpm", &dbg_dev.rcpm);
 	DBGFS_MAP_COMPATIBLE("fsl,dcsr-corenet", &dbg_dev.cndc1);
@@ -198,6 +199,7 @@ static void unmap_devices(void)
 	dbgfs_unmap(&dbg_dev.npc_trace);
 	dbgfs_unmap(&dbg_dev.nxc);
 	dbgfs_unmap(&dbg_dev.ocn);
+	dbgfs_unmap(&dbg_dev.bman);
 	dbgfs_unmap(&dbg_dev.qman);
 	dbgfs_unmap(&dbg_dev.rcpm);
 
@@ -266,6 +268,7 @@ static int dcsr_probe(struct platform_device *pdev)
 	init_fail |= dbgfs_device_init(dcsr_nxc_init, &dbg_dev.nxc, dbgfs_root_dentry);
 	init_fail |= dbgfs_device_init(dcsr_ocn_init, &dbg_dev.ocn, dbgfs_root_dentry);
 	init_fail |= dbgfs_device_init(dcsr_rcpm_init, &dbg_dev.rcpm, dbgfs_root_dentry);
+	init_fail |= dbgfs_device_init(ccsr_bman_init, &dbg_dev.bman, dbgfs_root_dentry);
 	init_fail |= dbgfs_device_init(ccsr_qman_init, &dbg_dev.qman, dbgfs_root_dentry);
 
 	/* create each possible FMAN */

@@ -78,30 +78,32 @@ int ccsr_qman_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	DBGFS_CREATE_RO_X32("dcp_dd_hasr", current_dentry,
 			&ptr->dcp_dd_hasr);
 
-	for (i = 0; i < QMAN_NUM_DEBUG_SW_CHANNELS; ++i) {
+	for (i = 0; i < QMAN_NUM_WQ_SW_DD_CFG_REGS; ++i) {
 		sprintf(reg_name, "wq_sc_dd_cfg_%d", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
 				&ptr->wq_sc_dd_cfg[i]);
 	}
-	for (i = 0; i < QMAN_NUM_DEBUG_POOL_CHANNELS; ++i) {
+	for (i = 0; i < QMAN_NUM_WQ_POOL_DD_CFG_REGS; ++i) {
 		sprintf(reg_name, "wq_pc_dd_cfg_%d", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
 				&ptr->wq_pc_dd_cfg[i]);
 	}
-	for (i = 0; i < QMAN_NUM_DEBUG_DIRECT_PORT_CHANNELS; ++i) {
+	for (i = 0; i < QMAN_NUM_WQ_DC0_DD_CFG_REGS; ++i) {
 		sprintf(reg_name, "wq_dc0_dd_cfg_%d", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
 				&ptr->wq_dc0_dd_cfg[i]);
+	}
+	for (i = 0; i < QMAN_NUM_WQ_DC1_DD_CFG_REGS; ++i) {
 		sprintf(reg_name, "wq_dc1_dd_cfg_%d", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
 				&ptr->wq_dc1_dd_cfg[i]);
 	}
-	DBGFS_CREATE_RO_X32("wq_dc2_dd_cfg_0", current_dentry,
-			&ptr->wq_dc2_dd_cfg);
-	DBGFS_CREATE_RO_X32("wq_dc3_dd_cfg_0", current_dentry,
-			&ptr->wq_dc3_dd_cfg);
-	DBGFS_CREATE_RO_X32("wq_dc4_dd_cfg_0", current_dentry,
-			&ptr->wq_dc4_dd_cfg);
+	DBGFS_CREATE_RW_X32("wq_dc2_dd_cfg_0", current_dentry,
+			&ptr->wq_dc2_dd_cfg[0]);
+	DBGFS_CREATE_RW_X32("wq_dc3_dd_cfg_0", current_dentry,
+			&ptr->wq_dc3_dd_cfg[0]);
+	DBGFS_CREATE_RW_X32("wq_dc4_dd_cfg_0", current_dentry,
+			&ptr->wq_dc4_dd_cfg[0]);
 
 	DBGFS_CREATE_RO_X32("qman_ip_rev_1", current_dentry,
 			&ptr->qman_ip_rev_1);

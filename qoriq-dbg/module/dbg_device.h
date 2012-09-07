@@ -45,6 +45,7 @@ struct dbg_device {
 
 /* maintains information on each sub-device managed by the driver */
 struct dbg_devices {
+	struct dbg_device bman;
 	struct dbg_device cndc1;
 	struct dbg_device cndc2;
 	struct dbg_device cpu[MAX_NUM_CPU];

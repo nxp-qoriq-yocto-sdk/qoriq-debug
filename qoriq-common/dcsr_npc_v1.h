@@ -45,16 +45,16 @@ struct npc {
 	u32 reserved1;
 	u32 reserved2;
 	u32 mcsr1;		/* MMA Control/Status Register 1 */
-	u32 mmar1hi;		/* MMA Address Register High 1 */
 	u32 mmar1lo;		/* MMA Address Register Low 1 */
+	u32 mmar1hi;		/* MMA Address Register High 1 */
 	u32 mmdr1;		/* MMA Data Register 1 */
 	u32 mcsr2;		/* MMA Control/Status Register 2 */
-	u32 mmar2hi;		/* MMA Address Register High 2 */
 	u32 mmar2lo;		/* MMA Address Register Low 2 */
+	u32 mmar2hi;		/* MMA Address Register High 2 */
 	u32 mmdr2;		/* MMA Data Register 2 */
 	u32 mcsr3;		/* MMA Control/Status Register 3 */
-	u32 mmar3hi;		/* MMA Address Register High 3 */
 	u32 mmar3lo;		/* MMA Address Register Low 3 */
+	u32 mmar3hi;		/* MMA Address Register High 3 */
 	u32 mmdr3;		/* MMA Data Register 3 */
 	u32 reserved3[0x03E5];
 } PACKED;

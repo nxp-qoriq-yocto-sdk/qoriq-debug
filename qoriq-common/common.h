@@ -34,20 +34,30 @@
 #define CTASSERT(a) extern char __dummy[(a) ? 1 : -1]
 
 /* Access to specific device registers */
+#define CNDC1_REG_PTR(x) (&((struct cndc_1 *)dbg_dev.cndc1.mem_ptr)->x)
+#define CNDC2_REG_PTR(x) (&((struct cndc_2 *)dbg_dev.cndc2.mem_ptr)->x)
 #define EPU_REG_PTR(x) (&((struct epu *)dbg_dev.epu.mem_ptr)->x)
 #define DDR_REG_PTR(i, x) (&((struct ddr *)dbg_dev.ddr[i].mem_ptr)->x)
+#define DPAA_REG_PTR(x) (&((struct dpaa *)dbg_dev.dpaa.mem_ptr)->x)
+#define FMAN_REG_PTR(i, x) (&((struct fman *)dbg_dev.fman[i].mem_ptr)->x)
 #define NAL_REG_PTR(x) (&((struct nal *)dbg_dev.nal.mem_ptr)->x)
 #define NPC_REG_PTR(x) (&((struct npc *)dbg_dev.npc.mem_ptr)->x)
 #define NXC_REG_PTR(x) (&((struct nxc *)dbg_dev.nxc.mem_ptr)->x)
+#define OCN_REG_PTR(x) (&((struct ocn *)dbg_dev.ocn.mem_ptr)->x)
 #define CPU_REG_PTR(i, x) (&((struct core_proxy *)dbg_dev.cpu[i].mem_ptr)->x)
 #define RCPM_REG_PTR(x) (&((struct rcpm *)dbg_dev.rcpm.mem_ptr)->x)
 
 /* Check for null ptrs */
+#define CNDC1_REG_PTR_VALID (dbg_dev.cndc1.mem_ptr != 0)
+#define CNDC2_REG_PTR_VALID (dbg_dev.cndc2.mem_ptr != 0)
 #define EPU_REG_PTR_VALID (dbg_dev.epu.mem_ptr != 0)
 #define DDR_REG_PTR_VALID(i) (dbg_dev.ddr[i].mem_ptr != 0)
+#define DPAA_REG_PTR_VALID (dbg_dev.dpaa.mem_ptr != 0)
+#define FMAN_REG_PTR_VALID(i) (dbg_dev.fman[i].mem_ptr != 0)
 #define NAL_REG_PTR_VALID (dbg_dev.nal.mem_ptr != 0)
 #define NPC_REG_PTR_VALID (dbg_dev.npc.mem_ptr != 0)
 #define NXC_REG_PTR_VALID (dbg_dev.nxc.mem_ptr != 0)
+#define OCN_REG_PTR_VALID (dbg_dev.ocn.mem_ptr != 0)
 #define CPU_REG_PTR_VALID(i) (dbg_dev.cpu[i].mem_ptr != 0)
 #define RCPM_REG_PTR_VALID (dbg_dev.rcpm.mem_ptr != 0)
 

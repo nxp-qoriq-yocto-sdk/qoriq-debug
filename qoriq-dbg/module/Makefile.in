@@ -31,6 +31,7 @@ ifneq ($(KERNELRELEASE),)
 
 obj-m	:= $(MODULE_NAME).o
 $(MODULE_NAME)-objs :=  \
+			ccsr_bman.o \
 			ccsr_fman.o \
 			ccsr_qman.o \
 			dbg_cpu.o \
@@ -57,15 +58,8 @@ else
 KERNEL_SRC = $(KSRC)
 ARCH = powerpc
 
-# These options used for a native build
-KERNEL_ARGS := M=$(ABDIR) ARCH=$(ARCH)
+KERNEL_ARGS := M=$(ABDIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE)
 INSTALL_ARGS := INSTALL_MOD_PATH=$(SYSROOT)
-
-# These options used for a cross build
-#PWD := $(shell pwd)
-#CROSS_COMPILE := powerpc-linux-gnu-
-#KERNEL_ARGS := M=$(PWD) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE)
-#INSTALL_ARGS := INSTALL_MOD_PATH=$(ROOTFS_PATH)
 
 .PHONY: build install clean
 

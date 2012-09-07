@@ -27,13 +27,17 @@
 /* number of software portals */
 #define QMAN_SOFT_PORTALS	10
 /* number of direct connect portals */
-#define QMAN_DIRECT_PORTALS	4
-/* number of Debug S/W Channels */
-#define QMAN_NUM_DEBUG_SW_CHANNELS	5
-/* number of Debug Pool Channels */
-#define QMAN_NUM_DEBUG_POOL_CHANNELS	8
-/* number of Debug direct connect port Channels */
-#define QMAN_NUM_DEBUG_DIRECT_PORT_CHANNELS	6
+#define QMAN_DIRECT_PORTALS	5
+/* Number of Work Queue S/W Debug Configuration Registers */
+#define QMAN_NUM_WQ_SW_DD_CFG_REGS	QMAN_SOFT_PORTALS/2
+/* Number of Work Queue Pool Debug Configuration Registers */
+#define QMAN_NUM_WQ_POOL_DD_CFG_REGS	8
+/* Number of Work Queue Direct Connect[n] Debug Configuration Registers */
+#define QMAN_NUM_WQ_DC0_DD_CFG_REGS	6
+#define QMAN_NUM_WQ_DC1_DD_CFG_REGS	6
+#define QMAN_NUM_WQ_DC2_DD_CFG_REGS	1
+#define QMAN_NUM_WQ_DC3_DD_CFG_REGS	1
+#define QMAN_NUM_WQ_DC4_DD_CFG_REGS	1
 
 /* QMan Software Portal Configuration */
 struct qman_soft_portal_config {
@@ -81,29 +85,29 @@ struct qman {
 	/* Direct Connect Portal (DCP) Configuration Registers */
 	struct qman_direct_portal_config
 		direct_portal_config[QMAN_DIRECT_PORTALS];
-	u8 reserved5[0xC0];
+	u8 reserved5[0xB0];
 
 	u8 reserved6[0x240];
 	/* WQ S/W Channel Dynamic Debug Config n */
-	u32 wq_sc_dd_cfg[QMAN_NUM_DEBUG_SW_CHANNELS];
+	u32 wq_sc_dd_cfg[QMAN_NUM_WQ_SW_DD_CFG_REGS];
 	u8 reserved7[0x2c];
 	/* WQ Channel Pool Dynamic Debug Config n */
-	u32 wq_pc_dd_cfg[QMAN_NUM_DEBUG_POOL_CHANNELS];
+	u32 wq_pc_dd_cfg[QMAN_NUM_WQ_POOL_DD_CFG_REGS];
 	u8 reserved8[0x20];
 	/* WQ Direct Connect Port 0 Dynamic Debug Config n */
-	u32 wq_dc0_dd_cfg[QMAN_NUM_DEBUG_DIRECT_PORT_CHANNELS];
+	u32 wq_dc0_dd_cfg[QMAN_NUM_WQ_DC0_DD_CFG_REGS];
 	u8 reserved9[0x28];
 	/* WQ Direct Connect Port 1 Dynamic Debug Config n */
-	u32 wq_dc1_dd_cfg[QMAN_NUM_DEBUG_DIRECT_PORT_CHANNELS];
+	u32 wq_dc1_dd_cfg[QMAN_NUM_WQ_DC1_DD_CFG_REGS];
 	u8 reserved10[0x28];
 	/* WQ Direct Connect Port 2 Dynamic Debug Config */
-	u32 wq_dc2_dd_cfg;
+	u32 wq_dc2_dd_cfg[QMAN_NUM_WQ_DC2_DD_CFG_REGS];
 	u8 reserved11[0x3c];
 	/* WQ Direct Connect Port 3 Dynamic Debug Config */
-	u32 wq_dc3_dd_cfg;
+	u32 wq_dc3_dd_cfg[QMAN_NUM_WQ_DC3_DD_CFG_REGS];
 	u8 reserved12[0x3c];
 	/* WQ Direct Connect Port 4 Dynamic Debug Config */
-	u32 wq_dc4_dd_cfg;
+	u32 wq_dc4_dd_cfg[QMAN_NUM_WQ_DC4_DD_CFG_REGS];
 	u8 reserved13[0x3c];
 	u8 reserved14[0x3F8];
 	u32 qman_ip_rev_1; /* QM IP Block Revision 1 register */
