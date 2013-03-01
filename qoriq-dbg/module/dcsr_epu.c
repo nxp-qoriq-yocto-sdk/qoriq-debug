@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -27,7 +27,7 @@ int dcsr_epu_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	int i;
 	struct dentry *current_dentry;
 	struct dentry *de;
-	struct epu *ptr = (struct epu *)dev->mem_ptr;
+	struct epu *ptr = (struct epu *)dev->mem_ptr[0];
 	char reg_name[DBFS_REG_NAME_LEN];
 
 	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev,
@@ -35,12 +35,13 @@ int dcsr_epu_init(struct dentry *parent_dentry, struct dbg_device *dev)
 
 	DBGFS_CREATE_RW_X32("epgcr", current_dentry, &ptr->epgcr);
 	DBGFS_CREATE_RW_X32("epesr", current_dentry, &ptr->epesr);
-	DBGFS_CREATE_RW_X32("episr0", current_dentry, &ptr->episr0);
-	DBGFS_CREATE_RW_X32("episr1", current_dentry, &ptr->episr1);
 	DBGFS_CREATE_RW_X32("epctrisr", current_dentry, &ptr->epctrisr);
 	DBGFS_CREATE_RW_X32("epctrcsr", current_dentry, &ptr->epctrcsr);
-	DBGFS_CREATE_RW_X32("epepdcr", current_dentry, &ptr->epepdcr);
 
+	for (i = 0; i < EPU_MAX_PROC_INTRPTS; ++i) {
+		sprintf(reg_name, "%s%d", "episr", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->episr[i]);
+	}
 	for (i = 0; i < EPU_NO_OF_COUNTERS; ++i) {
 		sprintf(reg_name, "%s%d", "epimcr", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->epimcr[i]);
@@ -73,5 +74,34 @@ int dcsr_epu_init(struct dentry *parent_dentry, struct dbg_device *dev)
 		sprintf(reg_name, "epegcr%d", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->epegcr[i]);
 	}
+
+#ifdef GEN2_DEBUG
+#ifdef GEN2_REV2_DEBUG
+	DBGFS_CREATE_RW_X32("epxtrigcr", current_dentry, &ptr->epxtrigcr);
+	for (i = 0; i < EPU_NO_EVT_PIN_REGS; ++i) {
+		sprintf(reg_name, "%s%d", "epevtcr", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->epevtcr[i]);
+	}
+	DBGFS_CREATE_RW_X32("epfsmsr0", current_dentry, &ptr->epfsmsr0);
+	for (i = 0; i < EPU_NO_FSM_STATES; ++i) {
+		sprintf(reg_name, "%s%d", "epfsmcmpr", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->epfsmcmpr[i]);
+		sprintf(reg_name, "%s%d", "epfsmcr", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->epfsmcr[i]);
+	}
+	/* registers numbered in decreasing order within memory */
+	for (i = 0; i < EPU_NO_RESRV_REGS; ++i) {
+		sprintf(reg_name, "%s%d", "eprsv", EPU_NO_RESRV_REGS-1-i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->eprsv[i]);
+	}
+	for (i = 0; i < EPU_NO_SEMA_REGS; ++i) {
+		sprintf(reg_name, "%s%d", "ephsr", EPU_NO_SEMA_REGS-1-i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry, &ptr->ephsr[i]);
+	}
+#endif
+#else
+	DBGFS_CREATE_RW_X32("epepdcr", current_dentry, &ptr->epepdcr);
+#endif
+
 	return 0;
 }

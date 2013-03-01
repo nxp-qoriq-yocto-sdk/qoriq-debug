@@ -27,7 +27,7 @@ int ccsr_bman_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	int i;
 	struct dentry *current_dentry;
 	struct dentry *de;
-	struct bman *ptr = (struct bman *)dev->mem_ptr;
+	struct bman *ptr = (struct bman *)dev->mem_ptr[0];
 	char reg_name[DBFS_REG_NAME_LEN];
 
 	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev, DEBUGFS_BMAN_NAME);

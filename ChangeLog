@@ -19,6 +19,12 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+Qoriq-debug version 1.4.0
+--------------------------
+Added limited support for e6500 based platforms.
+Only supports CPU, EPU(rev1) and new C-/S-NPC(rev1).
+C-/S-NPC trace buffers NOT supported. 
+
 Qoriq-debug version 1.3.0
 --------------------------
 Added support for BMAN registers:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -23,45 +23,43 @@
 
 #include <linux/debugfs.h>
 #include <linux/of_platform.h>
+#include <linux/list.h>
 
-/* Max number of components by type in QoriQ Arch */
-#define MAX_NUM_CPU		8
-#define MAX_NUM_FMAN		2
-#define MAX_NUM_DDR		2
+/* Only support a max of 2 memory ranges per device.
+ * If this increases then should consider a dynamic list instead */
+#define MAX_MEM_RANGE	2
 
-/* dbg_device maintains the association between the mapped dcsr memory
- * and the debugfs directory where the device files are located
- */
+struct dbg_device;
+
+/* Operations on the device entry */
+typedef int (*dev_init_fn)(struct dbg_device *dev);
+typedef int (*dev_remove_fn)(struct dbg_device *dev);
+typedef int (*dbgfs_init_fn)(struct dentry *parent_dentry,
+		struct dbg_device *dev);
+
+/* dbg_device structure */
 struct dbg_device {
-	/* index number for this device */
-	int index;
-	/* mapped memory address */
-	void *mem_ptr;
-	/* current directory */
-	struct dentry *current_dentry;
-	/* device tree node pointer */
+	struct list_head list;
+	/*  device tree ordinal index */
+	int dt_idx;
 	struct device_node *np;
+	/* base name /index for the dbgfs dir */
+	const char *dbgfs_dir_name;
+	int dbgfs_dir_index;
+	/* current dbgfs directory */
+	struct dentry *current_dentry;
+	/* number of valid memory range ids */
+	int num_mem_ids;
+	/* memory range id */
+	int mem_id[MAX_MEM_RANGE];
+	/* mapped memory range */
+	void __iomem *mem_ptr[MAX_MEM_RANGE];
+	/* device dependent private data */
+	void *private[MAX_MEM_RANGE];
+	/* device operations */
+	dev_init_fn dev_init_fn;
+	dev_remove_fn dev_remove_fn;
+	dbgfs_init_fn dbgfs_init_fn;
 };
-
-/* maintains information on each sub-device managed by the driver */
-struct dbg_devices {
-	struct dbg_device bman;
-	struct dbg_device cndc1;
-	struct dbg_device cndc2;
-	struct dbg_device cpu[MAX_NUM_CPU];
-	struct dbg_device ddr[MAX_NUM_DDR];
-	struct dbg_device dpaa;
-	struct dbg_device epu;
-	struct dbg_device fman[MAX_NUM_FMAN];
-	struct dbg_device nal;
-	struct dbg_device npc;
-	struct dbg_device npc_trace;
-	struct dbg_device nxc;
-	struct dbg_device ocn;
-	struct dbg_device qman;
-	struct dbg_device rcpm;
-};
-/* maintains information on each sub-device managed by the driver */
-extern struct dbg_devices dbg_dev;
 
 #endif /* DBG_DEVICE_H */

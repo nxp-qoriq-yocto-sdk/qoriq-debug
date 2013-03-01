@@ -24,12 +24,19 @@
 
 #include "dbg_private.h"
 #include "dbg_device.h"
-#include "dcsr_npc_v1.h"
 
 #define DEBUGFS_NPC_NAME "npc"
+#define DEBUGFS_CNPC_NAME "cnpc"
+#define DEBUGFS_SNPC_NAME "snpc"
 
 /* Driver Initialization Functions */
 extern int dcsr_npc_init(struct dentry *parent_dentry,
+					struct dbg_device *dev);
+
+extern int dcsr_cnpc_init(struct dentry *parent_dentry,
+					struct dbg_device *dev);
+
+extern int dcsr_snpc_init(struct dentry *parent_dentry,
 					struct dbg_device *dev);
 
 #endif  /* DCSR_NPC_H */

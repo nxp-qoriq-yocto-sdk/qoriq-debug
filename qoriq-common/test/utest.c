@@ -39,6 +39,7 @@ typedef uint8_t u8;
 #include "ccsr_qman_v1.h"
 #include "dcsr_corenet_v1.h"
 #include "dcsr_cpu_v1.h"
+#include "dcsr_cpu_v2.h"
 #include "dcsr_ddr_v1.h"
 #include "dcsr_dpaa_v1.h"
 #include "dcsr_epu_v1.h"

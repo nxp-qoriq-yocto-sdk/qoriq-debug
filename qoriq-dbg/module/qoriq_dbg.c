@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -21,6 +21,7 @@
 
 #include <linux/module.h>
 #include <linux/debugfs.h>
+#include <linux/slab.h>
 #include <linux/err.h>
 #include <linux/of_platform.h>
 #include <linux/io.h>
@@ -30,12 +31,12 @@
 /* platform_driver operations */
 static int dcsr_probe(struct platform_device *pdev);
 static int dcsr_remove(struct platform_device *pdev);
-static int dcsr_probe_success;
 
-/* our root directory entry */
+/* debugfs root directory entry */
 static struct dentry *dbgfs_root_dentry;
+/* dbg_device list */
+static LIST_HEAD(dbg_devs);
 
-/* driver will handle all debug activity for devices within dcsr */
 const struct of_device_id dcsr_id_table[] = {
 		{ .compatible = "fsl,dcsr"},
 		{},
@@ -52,264 +53,139 @@ static struct platform_driver dcsr_driver = {
 		.remove = dcsr_remove,
 };
 
-/* maintains information on each sub-device managed by the driver */
-struct dbg_devices dbg_dev;
-
-static struct device_node *dbgfs_map_fqcompatible(const char *compatible,
-		struct device_node *from,
-		const char *type,
-		int instance,
-		struct dbg_device *dev_ptr)
+static struct dbg_device *alloc_device(void)
 {
-	struct device_node *np;
-	np = of_find_compatible_node(from, type, compatible);
-	if (np) {
-		dev_ptr->mem_ptr = of_iomap(np, instance);
-		dev_ptr->np = np;
-	} else {
-		dev_ptr->mem_ptr = 0;
-		dev_ptr->np = 0;
-	}
-	return np;
+	struct dbg_device *dev;
+	dev = kzalloc(sizeof(struct dbg_device),
+		GFP_ATOMIC);
+	if (dev)
+		INIT_LIST_HEAD(&dev->list);
+	return dev;
 }
 
-#define DBGFS_MAP_FROM_COMPATIBLE(compatible, from, dev_ptr) \
-		dbgfs_map_fqcompatible(compatible, from, NULL, 0, dev_ptr)
-
-#define DBGFS_MAP_COMPATIBLE(compatible, dev_ptr) \
-		dbgfs_map_fqcompatible(compatible, NULL, NULL, 0, dev_ptr)
-
-
-static struct device_node *dbgfs_map_cpus(const char *compatible,
-		struct device_node *from,
-		struct dbg_device *dev_ptr)
+/* Allocate and add all compatible devices to the dbg_device list */
+static void add_compatible_devices(const char* compatible,
+	const char *name,
+	dev_init_fn dev_init, dbgfs_init_fn dbgfs_init)
 {
 	struct device_node *np;
-	struct device_node *phandle;
-	const u32 *property;
-	const int pindex = 0;
+	struct dbg_device *dev;
+	int index = 0;
+	int i;
 
-	dev_ptr->index = 0;
+	for_each_compatible_node(np, NULL, compatible) {
+		dev = alloc_device();
+		if (!dev) {
+			printk(KERN_ERR DRIVER_NAME
+				": Cannot allocate memory for %s.\n",
+				np->full_name);
+			continue;
+		}
+		/* Try to map MAX_MEM_RANGES */
+		for (i = 0; i < MAX_MEM_RANGE; i++) {
+			dev->mem_id[i] = i;
+			dev->mem_ptr[i] = of_iomap(np, i);
+		}
+		dev->dbgfs_dir_name = name;
+		dev->dbgfs_init_fn = dbgfs_init;
+		dev->dev_init_fn = dev_init;
+		dev->np = np;
+		dev->dt_idx = index++;
+		list_add(&dev->list, &dbg_devs);
+	}
+}
 
-	np = dbgfs_map_fqcompatible(compatible, from, NULL, pindex ,dev_ptr);
-	if (np) {
-		/* find the phandle property which contains the device index */
-		property = of_get_property(np, "cpu-handle", NULL);
-		if (property) {
-			phandle = of_find_node_by_phandle(*property);
-			if (phandle) {
-				property = of_get_property(phandle, "reg",
-								NULL);
-				if (property)
-					dev_ptr->index = *property;
+static void remove_devices(void)
+{
+	struct dbg_device *dev;
+	struct list_head *pos, *q;
+	int i;
+	void *mem;
+
+	list_for_each_entry(dev, &dbg_devs, list) {
+		/* unmap the memory ranges */
+		for (i = 0; i < MAX_MEM_RANGE; i++) {
+			if (dev->mem_ptr[i]) {
+				mem = dev->mem_ptr[i];
+				dev->mem_ptr[i] = 0;
+				iounmap(mem);
 			}
 		}
+		/* device specific cleanup on removal */
+		if (dev->dev_remove_fn)
+			dev->dev_remove_fn(dev);
 	}
 
-	return np;
-}
-
-
-static void dbgfs_unmap( struct dbg_device *dev_ptr)
-{
-	if (dev_ptr->mem_ptr) {
-		iounmap(dev_ptr->mem_ptr);
-		dev_ptr->mem_ptr = 0;
+	list_for_each_safe(pos, q, &dbg_devs) {
+		dev = list_entry(pos, struct dbg_device, list);
+		list_del(pos);
+		kfree(dev);
 	}
-}
-
-typedef int (*init_fn)(struct dentry *parent_dentry, struct dbg_device *dev);
-
-static int dbgfs_device_init(init_fn fn, struct dbg_device *dev_ptr,
-		struct dentry *dentry)
-{
-	int ret = 0;
-	if (dev_ptr->mem_ptr) {
-		ret = fn(dentry, dev_ptr);
-		if (ret)
-			printk(KERN_ERR DRIVER_NAME ": Module @ 0x%08lx failed\n",
-					(unsigned long)(dev_ptr)->mem_ptr);
-	}
-	return ret;
-}
-
-static void map_devices(void)
-{
-	int i;
-	struct device_node *np;
-
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-dpaa", &dbg_dev.dpaa);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-epu", &dbg_dev.epu);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-nal", &dbg_dev.nal);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-npc", &dbg_dev.npc);
-	/* map the second NPC range */
-	dbgfs_map_fqcompatible("fsl,dcsr-npc", NULL, NULL, 1,
-			&dbg_dev.npc_trace);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-nxc", &dbg_dev.nxc);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-ocn", &dbg_dev.ocn);
-	DBGFS_MAP_COMPATIBLE("fsl,bman", &dbg_dev.bman);
-	DBGFS_MAP_COMPATIBLE("fsl,qman", &dbg_dev.qman);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-rcpm", &dbg_dev.rcpm);
-	DBGFS_MAP_COMPATIBLE("fsl,dcsr-corenet", &dbg_dev.cndc1);
-	/* map the second corenet range */
-	dbgfs_map_fqcompatible("fsl,dcsr-corenet", NULL, NULL, 1,
-			&dbg_dev.cndc2);
-
-	/* start at the top (NULL) and search for
-	 * at most MAX_NUM_DDR ddr devices
-	 */
-	np = NULL;
-	for (i = 0; i < MAX_NUM_DDR; ++i) {
-		np = DBGFS_MAP_FROM_COMPATIBLE("fsl,dcsr-ddr", np, &dbg_dev.ddr[i]);
-		if (!np)
-			break;
-	}
-
-	/* start at the top (NULL) and search for
-	 * at most MAX_NUM_CPU cores
-	 */
-	np = NULL;
-	for (i = 0; i < MAX_NUM_CPU; ++i) {
-		np = dbgfs_map_cpus("fsl,dcsr-cpu-sb-proxy", np,
-				&dbg_dev.cpu[i]);
-		if (!np)
-			break;
-	}
-
-	/* start at the top (NULL) and search for
-	 *  at most MAX_NUM_FMAN fman devices
-	 */
-	np = NULL;
-	for (i = 0; i < MAX_NUM_FMAN; ++i) {
-		np = DBGFS_MAP_FROM_COMPATIBLE("fsl,fman", np, &dbg_dev.fman[i]);
-		if (!np)
-			break;
-	}
-}
-
-static void unmap_devices(void)
-{
-	int i;
-	dbgfs_unmap(&dbg_dev.cndc1);
-	dbgfs_unmap(&dbg_dev.cndc2);
-	dbgfs_unmap(&dbg_dev.dpaa);
-	dbgfs_unmap(&dbg_dev.epu);
-	dbgfs_unmap(&dbg_dev.nal);
-	dbgfs_unmap(&dbg_dev.npc);
-	dbgfs_unmap(&dbg_dev.npc_trace);
-	dbgfs_unmap(&dbg_dev.nxc);
-	dbgfs_unmap(&dbg_dev.ocn);
-	dbgfs_unmap(&dbg_dev.bman);
-	dbgfs_unmap(&dbg_dev.qman);
-	dbgfs_unmap(&dbg_dev.rcpm);
-
-	for (i = 0; i < MAX_NUM_CPU; ++i)
-		dbgfs_unmap(&dbg_dev.cpu[i]);
-
-	for (i = 0; i < MAX_NUM_DDR; ++i)
-		dbgfs_unmap(&dbg_dev.ddr[i]);
-
-	for (i = 0; i < MAX_NUM_FMAN; ++i)
-		dbgfs_unmap(&dbg_dev.fman[i]);
 }
 
 static int dcsr_probe(struct platform_device *pdev)
 {
+	struct dbg_device *dev;
 	int ret = 0;
-	int i;
-	int init_fail;
 
-	/* Map devices from the device tree  */
-	map_devices();
+#if defined(CORE_E6500)
+	add_compatible_devices("fsl,dcsr-e6500-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
+	add_compatible_devices("fsl,dcsr-cnpc", DEBUGFS_CNPC_NAME, NULL, dcsr_cnpc_init);
+	add_compatible_devices("fsl,dcsr-snpc", DEBUGFS_SNPC_NAME, NULL, dcsr_snpc_init);
+	add_compatible_devices("fsl,t4240-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
+	add_compatible_devices("fsl,b4860-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
+	add_compatible_devices("fsl,b4420-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
+#else
+	/* discover and allocate all devices from the device tree */
+	add_compatible_devices("fsl,bman", DEBUGFS_BMAN_NAME, NULL, ccsr_bman_init);
+	add_compatible_devices("fsl,fman", DEBUGFS_FMAN_NAME, NULL, ccsr_fman_init);
+	add_compatible_devices("fsl,qman", DEBUGFS_QMAN_NAME, NULL, ccsr_qman_init);
+	add_compatible_devices("fsl,dcsr-e500mc-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
+	add_compatible_devices("fsl,dcsr-e5500-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
+	add_compatible_devices("fsl,dcsr-corenet", DEBUGFS_CORENET_NAME, NULL, dcsr_corenet_init);
+	add_compatible_devices("fsl,dcsr-ddr", DEBUGFS_DDR_NAME, NULL, dcsr_ddr_init);
+	add_compatible_devices("fsl,dcsr-dpaa", DEBUGFS_DPAA_NAME, NULL, dcsr_dpaa_init);
+	add_compatible_devices("fsl,dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
+	add_compatible_devices("fsl,dcsr-nal", DEBUGFS_NAL_NAME, NULL, dcsr_nal_init);
+	add_compatible_devices("fsl,dcsr-npc", DEBUGFS_NPC_NAME, NULL, dcsr_npc_init);
+	add_compatible_devices("fsl,dcsr-nxc", DEBUGFS_NXC_NAME, NULL, dcsr_nxc_init);
+	add_compatible_devices("fsl,dcsr-ocn", DEBUGFS_OCN_NAME, NULL, dcsr_ocn_init);
+	add_compatible_devices("fsl,dcsr-rcpm", DEBUGFS_RCPM_NAME, NULL, dcsr_rcpm_init);
+#endif
 
 	/* create the root directory in debugfs */
 	dbgfs_root_dentry = debugfs_create_dir(DBGFS_ROOT_NAME, NULL);
 	if (IS_ERR_OR_NULL(dbgfs_root_dentry)) {
 		ret = -ENOMEM;
-		goto err_1_out;
+		goto err;
 	}
 
-	/* accumulate all the dbgfs_device_init() return codes */
-	init_fail = 0;
-
-	/* create each possible CPU */
-	for (i = 0; i < MAX_NUM_CPU; ++i) {
-		//dbg_dev.cpu[i].index = i;
-		init_fail |= dbgfs_device_init(dbg_cpu_init, &dbg_dev.cpu[i],
-				dbgfs_root_dentry);
+	/* perform device specific initialization */
+	list_for_each_entry(dev, &dbg_devs, list) {
+		if (dev->dev_init_fn)
+			dev->dev_init_fn(dev);
 	}
 
-	/* Corenet is defined in two regions in the same current directory */
-	init_fail |= dbgfs_device_init(dcsr_corenet1_init, &dbg_dev.cndc1,
-			dbgfs_root_dentry);
-	/* pass the cndc1 current dir to the cndc2 */
-	dbg_dev.cndc2.current_dentry = dbg_dev.cndc1.current_dentry;
-	init_fail |= dbgfs_device_init(dcsr_corenet2_init, &dbg_dev.cndc2,
-			dbgfs_root_dentry);
-
-	/* create each possible DDR */
-	for (i = 0; i < MAX_NUM_DDR; ++i) {
-		dbg_dev.ddr[i].index = i+1;
-		init_fail |= dbgfs_device_init(dcsr_ddr_init, &dbg_dev.ddr[i],
-				dbgfs_root_dentry);
+	/* device specific creation of debugfs entries */
+	list_for_each_entry(dev, &dbg_devs, list) {
+		if (dev->dbgfs_init_fn)
+			dev->dbgfs_init_fn(dbgfs_root_dentry, dev);
 	}
 
-	init_fail |= dbgfs_device_init(dcsr_dpaa_init, &dbg_dev.dpaa, dbgfs_root_dentry);
-	init_fail |= dbgfs_device_init(dcsr_epu_init, &dbg_dev.epu, dbgfs_root_dentry);
-	init_fail |= dbgfs_device_init(dcsr_nal_init, &dbg_dev.nal, dbgfs_root_dentry);
-
-	/* NPC is defined in two regions in the same current directory */
-	init_fail |= dbgfs_device_init(dcsr_npc_init, &dbg_dev.npc, dbgfs_root_dentry);
-	/* pass the npc current dir to the npc_trace */
-	dbg_dev.npc_trace.current_dentry = dbg_dev.npc.current_dentry;
-	/* NPC trace needs access to NPC resources */
-	init_fail |= dcsr_npc_trace_init(dbgfs_root_dentry, &dbg_dev);
-
-	init_fail |= dbgfs_device_init(dcsr_nxc_init, &dbg_dev.nxc, dbgfs_root_dentry);
-	init_fail |= dbgfs_device_init(dcsr_ocn_init, &dbg_dev.ocn, dbgfs_root_dentry);
-	init_fail |= dbgfs_device_init(dcsr_rcpm_init, &dbg_dev.rcpm, dbgfs_root_dentry);
-	init_fail |= dbgfs_device_init(ccsr_bman_init, &dbg_dev.bman, dbgfs_root_dentry);
-	init_fail |= dbgfs_device_init(ccsr_qman_init, &dbg_dev.qman, dbgfs_root_dentry);
-
-	/* create each possible FMAN */
-	for (i = 0; i < MAX_NUM_FMAN; ++i) {
-		dbg_dev.fman[i].index = i+1;
-		init_fail |= dbgfs_device_init(ccsr_fman_init, &dbg_dev.fman[i],
-				dbgfs_root_dentry);
-	}
-
-	if (init_fail)
-		goto err_2_out;
-
-	dcsr_probe_success = 1;
 	return ret;
-
-err_2_out:
-	debugfs_remove_recursive(dbgfs_root_dentry);
-	debugfs_remove(dbgfs_root_dentry);
-err_1_out:
-	unmap_devices();
-	dcsr_probe_success = 0;
-
+err:
+	remove_devices();
 	return ret;
 }
 
 static int dcsr_remove(struct platform_device *pdev)
 {
-	if (dcsr_probe_success) {
-		debugfs_remove_recursive(dbgfs_root_dentry);
-		debugfs_remove(dbgfs_root_dentry);
-
-		unmap_devices();
-	}
-
+	debugfs_remove_recursive(dbgfs_root_dentry);
+	debugfs_remove(dbgfs_root_dentry);
+	remove_devices();
 	return 0;
 }
 
-/*
- * Load and unload the module
- * The real work is done when the device is bound to the driver
- */
 static int __init dcsr_module_init(void)
 {
 	return platform_driver_register(&dcsr_driver);
@@ -325,4 +201,4 @@ module_exit(dcsr_module_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("freescale.com");
 MODULE_DESCRIPTION("QorIQ Trace Debug and Performance Monitoring");
-MODULE_SUPPORTED_DEVICE("Freescale QorIQ P4080 P3041 P5020");
+MODULE_SUPPORTED_DEVICE("Freescale QorIQ P3041 P4080 P5020 P5040 T4240 B4860");

@@ -29,6 +29,6 @@
 
 /* Driver Initialization Functions */
 extern int dcsr_npc_trace_init(struct dentry *parent_dentry,
-					struct dbg_devices *dbg_devs);
+					struct dbg_device *dbg_dev);
 
 #endif  /* DCSR_NPC_TRACE_H */

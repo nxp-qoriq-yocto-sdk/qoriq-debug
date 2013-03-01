@@ -27,12 +27,15 @@ int ccsr_fman_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	int i, x, j, k;
 	struct dentry *current_dentry;
 	struct dentry *de;
-	struct fman *ptr = (struct fman *)dev->mem_ptr;
+	struct fman *ptr = (struct fman *)dev->mem_ptr[0];
 	char flowchar[FMAN_NUM_DEBUG_FLOWS] = {'a', 'b', 'c'};
 	char reg_name[DBFS_REG_NAME_LEN];
 
+	/* FMAN id uses a 1 based index */
+	dev->dbgfs_dir_index = dev->dt_idx + 1;
+
 	CREATE_CURRENT_DBGFS_DIR_INDEXED(parent_dentry, dev,
-					DEBUGFS_FMAN_NAME);
+					DEBUGFS_FMAN_NAME, dev->dbgfs_dir_index);
 
 	/* BMI common */
 	DBGFS_CREATE_RW_X32("fmbm_gde", current_dentry,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -27,7 +27,7 @@ int dcsr_ocn_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	int i;
 	struct dentry *current_dentry;
 	struct dentry *de;
-	struct ocn *ptr = (struct ocn *)dev->mem_ptr;
+	struct ocn *ptr = (struct ocn *)dev->mem_ptr[0];
 	char reg_name[DBFS_REG_NAME_LEN];
 
 	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev,

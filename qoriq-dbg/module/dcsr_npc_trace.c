@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -25,6 +25,7 @@
 #include <linux/io.h>
 
 #include "dcsr_npc.h"
+#include "dcsr_npc_v1.h"
 #include "dcsr_npc_trace.h"
 
 /* Private Fwd Decls */
@@ -49,29 +50,21 @@ const struct file_operations npc_trace_raw_fops = {
 };
 
 /* NPC global pointers */
-struct npc *npc_ptr;
+struct npc_v1 *npc_ptr;
 /* Trace buffer is an array of u32  */
 u32 *npc_trace_ptr;
 
-/* Driver Initialization Functions */
-int dcsr_npc_trace_init(struct dentry *parent_dentry, struct dbg_devices *dbg_devs)
+/* Called AFTER NPC initialization */
+int dcsr_npc_trace_init(struct dentry *parent_dentry, struct dbg_device *dbg_dev)
 {
 	int ret = 0;
-	struct dentry *current_dentry;
+	struct dentry *current_dentry = dbg_dev->current_dentry;
 	struct dentry *de;
-
-	/* copy the pointers to data */
-	npc_trace_ptr = (u32 *)dbg_devs->npc_trace.mem_ptr;
-	npc_ptr = (struct npc *)dbg_devs->npc.mem_ptr;
+	npc_trace_ptr = (u32 *)dbg_dev->mem_ptr[1];
+	npc_ptr = (struct npc_v1 *)dbg_dev->mem_ptr[0];
 
 	if (npc_ptr == 0 || npc_trace_ptr == 0)
 		return ret;
-
-	current_dentry = dbg_devs->npc.current_dentry;
-	if (!current_dentry) {
-		CREATE_CURRENT_DBGFS_DIR(parent_dentry, &dbg_devs->npc,
-						DEBUGFS_NPC_NAME);
-	}
 
 	/* Special since not a simple memory mapped register */
 	de = debugfs_create_file("trace_buffer", DBGFS_RO_MODE, current_dentry,

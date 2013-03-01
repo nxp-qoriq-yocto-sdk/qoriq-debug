@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -26,7 +26,7 @@ int dcsr_nal_init(struct dentry *parent_dentry, struct dbg_device *dev)
 {
 	struct dentry *current_dentry;
 	struct dentry *de;
-	struct nal *ptr = (struct nal *)dev->mem_ptr;
+	struct nal *ptr = (struct nal *)dev->mem_ptr[0];
 
 	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev,
 					DEBUGFS_NAL_NAME);

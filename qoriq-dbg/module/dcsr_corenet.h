@@ -29,9 +29,7 @@
 #define DEBUGFS_CORENET_NAME "corenet"
 
 /* Driver Initialization Functions */
-extern int dcsr_corenet1_init(struct dentry *parent_dentry,
-				struct dbg_device *dev);
-extern int dcsr_corenet2_init(struct dentry *parent_dentry,
+extern int dcsr_corenet_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
 #endif  /* DCSR_CORENET_H_ */

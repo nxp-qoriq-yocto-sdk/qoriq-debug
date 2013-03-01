@@ -28,7 +28,20 @@
 #define CORE_PROXY_STRUCT_SIZE	0x1000
 
 /* number of PM capture counters */
+#ifdef CORE_E6500
+#define NUM_CORE_PM_COUNTERS		6
+#define NUM_CORE_IAC_COMPARATORS	8
+#define NUM_CORE_DAC_COMPARATORS	2
+#else
 #define NUM_CORE_PM_COUNTERS	4
+#endif /* defined(CORE_E6500) */
+
+#ifdef CORE_E6500
+struct addr_pair {
+	u32 upper;
+	u32 lower;
+} PACKED;
+#endif /* defined(CORE_E6500) */
 
 struct core_proxy {
 	/* Debug Status */
@@ -47,43 +60,107 @@ struct core_proxy {
 	u32 pvr;
 	/* External Debug Status Register Mask 0 */
 	u32 edbsrmsk0;
-	u8  reserved2[0x8];
+	u8  reserved2[0x28-0x20];
 	/* Program Counter Capture Register High */
 	u32 pcch;
 	/* Program Counter Capture Register Low */
 	u32 pccl;
-	/* Perfmon Capture Count Register 0-3 */
+	/* Perfmon Capture Count Registers */
 	u32 pmcc[NUM_CORE_PM_COUNTERS];
-	u8  reserved3[0xC0];
-
-	/* Debug Control */
+#ifdef CORE_E6500
+	u8 reserved3[0xfc-0x48];
+	/* Processor Debug Information Register */
+	u32 pdir;
+#else
+	u8  reserved3[0x100-0x40];
+#endif /* defined(CORE_E6500) */
 	/* External Debug Control Register 0 (EDBCR0) */
 	u32 edbcr0;
-	u8  reserved4[0xFC];
-	u8  reserved5[0x100];
-	u8  reserved8[0x100];
-
+#ifdef CORE_E6500
+	u8 reserved4[0x120-0x104];
+	/* Extended External Debug Control Register 0 (EEDBCR0) */
+	u32 eedbcr0;
+	u8 reserved5[0x130-0x124];
+	/* External Debug Resource Allocation Control Register 0 (EEDBCR0) */
+	u32 edbrac0;
+	/* External Debug Resource Request Register 0 (EEDBCR0) */
+	u32 edbrr0;
+	/*  Debug Resource Request Register 0 (EEDBCR0) */
+	u32 dbrr0;
+	u8  reserved6[0x140-0x13c];
+	/*  Debug Control Register 0 (DBCR0) */
+	u32 dbcr0;
+	u8 reserved7[0x150-0x144];
+	/*  Perfmon Counter  Register(PMC) */
+	u32 pmc[NUM_CORE_PM_COUNTERS];
+	u8 reserved8[0x170-0x168];
+	/*  Perfmon Local Control a Register(PMC) */
+	u32 pmlca[NUM_CORE_PM_COUNTERS];
+	u8 reserved9[0x190-0x188];
+	/*  Perfmon Local Control b Register(PMC) */
+	u32 pmlcb[NUM_CORE_PM_COUNTERS];
+	u8 reserved10[0x1b0-0x1a8];
+	/* Perfmon Global Control 0 Register */
+	u32 pmgc0;
+	u8  reserved11[0x400-0x1b4];
+#else
+	u8  reserved4[0x400-0x104];
+#endif /* defined(CORE_E6500) */
 	/* Nexus */
-	u8  reserved9[0x8];
+	u8  reserved12[0x408-0x400];
 	/* Nexus Development Control Register 1 (DC1) */
 	u32 dc1;
 	/* Nexus Development Control Register 2 (DC2) */
 	u32 dc2;
-	u8  reserved10[0x4];
+#ifdef CORE_E6500
+	/* Nexus Development Control Register 2 (DC3) */
+	u32 dc3;
+#else
+	u8  reserved13[0x414-0x410];
+#endif
 	/* Nexus Development Control Register 4 (DC4) */
 	u32 dc4;
-	u8  reserved11[0x14];
+	u8  reserved14[0x42c-0x418];
 	/* Watchpoint Trigger Register 1 (WT1) */
 	u32 wt1;
-	u8  reserved12[0x28];
+#ifdef CORE_E6500
+	/* Watchpoint Trigger Register 2 (WT2) */
+	u32 wt2;
+#else
+	u8  reserved15[0x434-0x430];
+#endif /* defined(CORE_E6500) */
+	u8 reserved16[0x458-0x434];
 	/* Watchpoint Mask Register (WMSK) */
 	u32 wmsk;
 	/* Nexus Overrun Control Register (OVCR) */
 	u32 ovcr;
-	u8  reserved13[0xA0];
-	u8  reserved14[0x100];
-	u8  reserved15[0x100];
-	u8  reserved16[0x900];
+#ifdef CORE_E6500
+	u8 reserved17[0x4c0-0x460];
+	/* Reload Counter Configuration Register (RCCR) */
+	u32 rccr;
+	/* Reload Counter Value Register (RCVR) */
+	u32 rcvr;
+	/* Perfmon Snapshot Configuration Register (PMSCR) */
+	u32 pmscr;
+	u8 reserved18[0x500-0x4cc];
+	/* Debug Control Register 1 (DBCR1) */
+	u32 dbcr1;
+	/**< Debug Control Register 2 (DBCR2) */
+	u32 dbcr2;
+	u8 reserved19[0x50c-0x508];
+	/* Debug Control Register 4 (DBCR4) */
+	u32 dbcr4;
+	/* Debug Control Register 5 (DBCR5) */
+	u32 dbcr5;
+	u8 reserved20[0x550-0x514];
+	/* Instruction Address Compare Register  */
+	struct addr_pair iac[NUM_CORE_IAC_COMPARATORS];
+	/**< Data Address Compare Register */
+	struct addr_pair dac[NUM_CORE_DAC_COMPARATORS];
+	u8 reserved21[0x1000-0x5a0];
+#else
+	u8  reserved17[0x1000-0x460];
+#endif /* defined(CORE_E6500) */
 } PACKED;
 CTASSERT(sizeof(struct core_proxy) == CORE_PROXY_STRUCT_SIZE);
 
@@ -146,4 +223,4 @@ CTASSERT(sizeof(struct core_proxy) == CORE_PROXY_STRUCT_SIZE);
 #define CPU_OVCR_STTHOLD_MASK		0x00003000
 #define CPU_OVCR_STTHOLD_SHIFT		0xc
 
-#endif  /* DBG_CPU_V1_H */
+#endif  /* DCSR_CPU_V1_H */

@@ -61,11 +61,11 @@
 	} while (0)
 
 /* Create the named index directory in the parent dir*/
-#define CREATE_CURRENT_DBGFS_DIR_INDEXED(parent_dentry, dev, name) \
+#define CREATE_CURRENT_DBGFS_DIR_INDEXED(parent_dentry, dev, name, index) \
 	do { \
 		char dir_name[DBFS_REG_NAME_LEN]; \
 		snprintf(dir_name, DBFS_REG_NAME_LEN, \
-				"%s%d", name, dev->index); \
+				"%s%d", name, index); \
 		CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev, dir_name); \
 	} while (0)
 

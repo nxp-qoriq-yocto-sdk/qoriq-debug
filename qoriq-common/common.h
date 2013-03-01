@@ -24,6 +24,12 @@
 
 #include <linux/types.h>
 
+#if defined(CONFIG_B4_QDS) || defined(CONFIG_T4240_QDS)
+	#warning "Building for e6500"
+	#define CORE_E6500
+	#define GEN2_DEBUG
+#endif
+
 #ifndef PACKED
 #define PACKED __attribute__ ((__packed__))
 #endif

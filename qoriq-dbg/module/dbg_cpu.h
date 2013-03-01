@@ -28,8 +28,11 @@
 
 #define DEBUGFS_CPU_NAME "cpu"
 
+/* CPU specific initialization function */
+int cpu_init_fn(struct dbg_device *dev);
+
 /* Driver Initialization Functions */
-extern int dbg_cpu_init(struct dentry *parent_dentry,
+int dbg_cpu_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
 #endif  /* DBG_CPU_H */

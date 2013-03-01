@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+# Copyright (C) 2010, 2011, 2012, 2013 Freescale Semiconductor, Inc.
 # All rights reserved.
 #
 # This software may be distributed under the terms of the
@@ -33,13 +33,11 @@ EXTRA_DIST = \
 	module/dbg_cpu.c \
 	module/dbg_cpu.h \
 	module/dbg_device.h \
-	module/dbg_perfmon.c \
-	module/dbg_perfmon.h \
-	module/dbg_pmr_table.c \
+	module/dbg_pmr.c \
+	module/dbg_pmr.h \
 	module/dbg_private.h \
 	module/dbg_spr.c \
 	module/dbg_spr.h \
-	module/dbg_spr_table.c \
 	module/dcsr_corenet.c \
 	module/dcsr_corenet.h \
 	module/dcsr_ddr.c \

@@ -26,10 +26,13 @@ int dcsr_ddr_init(struct dentry *parent_dentry, struct dbg_device *dev)
 {
 	struct dentry *current_dentry;
 	struct dentry *de;
-	struct ddr *ptr = (struct ddr *)dev->mem_ptr;
+	struct ddr *ptr = (struct ddr *)dev->mem_ptr[0];
+
+	/* DDR id uses a 1 based index */
+	dev->dbgfs_dir_index = dev->dt_idx + 1;
 
 	CREATE_CURRENT_DBGFS_DIR_INDEXED(parent_dentry, dev,
-						DEBUGFS_DDR_NAME);
+						DEBUGFS_DDR_NAME,dev->dbgfs_dir_index);
 
 	/* Debug status control */
 	DBGFS_CREATE_RW_X32("ddicr0", current_dentry, &ptr->ddicr0);

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+# Copyright (C) 2010, 2011, 2012, 2013 Freescale Semiconductor, Inc.
 # All rights reserved.
 #
 # This software may be distributed under the terms of the
@@ -34,6 +34,7 @@ EXTRA_DIST= \
 	dcsr_epu_v1.h \
 	dcsr_nal_v1.h \
 	dcsr_npc_v1.h \
+	dcsr_npc_v2.h \
 	dcsr_nxc_v1.h \
 	dcsr_ocn_v1.h \
 	dcsr_rcpm_v1.h \

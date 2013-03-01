@@ -28,7 +28,7 @@
 #define NPC_STRUCT_SIZE		0x1000
 
 /* structure defines the memory map of the NPC control block */
-struct npc {
+struct npc_v1 {
 	u32 ncr;		/* NPC Control Register */
 	u32 nst;		/* NPC Status Register */
 	u32 sfr;		/* Source Filter Register */
@@ -58,7 +58,7 @@ struct npc {
 	u32 mmdr3;		/* MMA Data Register 3 */
 	u32 reserved3[0x03E5];
 } PACKED;
-CTASSERT(sizeof(struct npc) == NPC_STRUCT_SIZE);
+CTASSERT(sizeof(struct npc_v1) == NPC_STRUCT_SIZE);
 
 /* NCR */
 #define NPC_NCR_NEN_MASK	0x80000000

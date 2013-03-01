@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012, 2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -21,9 +21,60 @@
 
 #include <linux/fs.h>
 #include <linux/uaccess.h>
-
 #include "dbg_spr.h"
-#include "asm/reg_fsl_emb.h"
+
+void spr_reg_init(struct spr_register *regs, int core_id)
+{
+	int i;
+	for (i = 0; i < SPR_MAX; i++)
+		regs[i].core = core_id;
+
+	regs[SPR_DBSR].spr = SPRN_DBSR;
+	regs[SPR_DBCR0].spr = SPRN_DBCR0;
+	regs[SPR_DBCR1].spr = SPRN_DBCR1;
+	regs[SPR_DBCR2].spr = SPRN_DBCR2;
+	regs[SPR_DBCR4].spr = SPRN_DBCR4;
+#if defined(CORE_E6500)
+	regs[SPR_DBCR5].spr = SPRN_DBCR5;
+	regs[SPR_DBRR0].spr = SPRN_DBRR0;
+	regs[SPR_EDBRAC0].spr = SPRN_EDBRAC0;
+#endif
+	regs[SPR_IAC1].spr = SPRN_IAC1;
+#ifdef CONFIG_PPC64
+	regs[SPR_IAC1].size64 = 1;
+#endif
+	regs[SPR_IAC2].spr = SPRN_IAC2;
+#ifdef CONFIG_PPC64
+	regs[SPR_IAC2].size64 = 1;
+#endif
+#if defined(CORE_E6500)
+	regs[SPR_IAC3].spr = SPRN_IAC3;
+	regs[SPR_IAC3].size64 = 1;
+	regs[SPR_IAC4].spr = SPRN_IAC4;
+	regs[SPR_IAC4].size64 = 1;
+	regs[SPR_IAC5].spr = SPRN_IAC5;
+	regs[SPR_IAC5].size64 = 1;
+	regs[SPR_IAC6].spr = SPRN_IAC6;
+	regs[SPR_IAC6].size64 = 1;
+	regs[SPR_IAC7].spr = SPRN_IAC7;
+	regs[SPR_IAC7].size64 = 1;
+	regs[SPR_IAC8].spr = SPRN_IAC8;
+	regs[SPR_IAC8].size64 = 1;
+#endif /* defined(CORE_E6500) */
+	regs[SPR_DAC1].spr = SPRN_DAC1;
+#ifdef CONFIG_PPC64
+	regs[SPR_DAC1].size64 = 1;
+#endif
+	regs[SPR_DAC2].spr = SPRN_DAC2;
+#ifdef CONFIG_PPC64
+	regs[SPR_DAC2].size64 = 1;
+#endif
+	regs[SPR_NSPD].spr = SPRN_NSPD;
+	regs[SPR_NSPC].spr = SPRN_NSPC;
+	regs[SPR_DEVENT].spr = SPRN_DEVENT;
+	regs[SPR_DDAM].spr = SPRN_DDAM;
+	regs[SPR_NPIDR].spr = SPRN_NPIDR;
+}
 
 /* Fwd declarations */
 static int spr_open_generic(struct inode *inode, struct file *file);
@@ -66,17 +117,54 @@ static void _read_spr(void *info)
 	case SPRN_DBCR4:
 		spr->val = mfspr(SPRN_DBCR4);
 		break;
+#if defined(CORE_E6500)
+	case SPRN_DBCR5:
+		spr->val = mfspr(SPRN_DBCR5);
+		break;
+	case SPRN_DBRR0:
+		spr->val = mfspr(SPRN_DBRR0);
+		break;
+	case SPRN_EDBRAC0:
+		spr->val = mfspr(SPRN_EDBRAC0);
+		break;
+#endif
 	case SPRN_IAC1:
 		spr->val = mfspr(SPRN_IAC1);
 		break;
 	case SPRN_IAC2:
 		spr->val = mfspr(SPRN_IAC2);
 		break;
+#if defined(CORE_E6500)
+	case SPRN_IAC3:
+		spr->val = mfspr(SPRN_IAC3);
+		break;
+	case SPRN_IAC4:
+		spr->val = mfspr(SPRN_IAC4);
+		break;
+	case SPRN_IAC5:
+		spr->val = mfspr(SPRN_IAC5);
+		break;
+	case SPRN_IAC6:
+		spr->val = mfspr(SPRN_IAC6);
+		break;
+	case SPRN_IAC7:
+		spr->val = mfspr(SPRN_IAC7);
+		break;
+	case SPRN_IAC8:
+		spr->val = mfspr(SPRN_IAC8);
+		break;
+#endif
 	case SPRN_DAC1:
 		spr->val = mfspr(SPRN_DAC1);
 		break;
 	case SPRN_DAC2:
 		spr->val = mfspr(SPRN_DAC2);
+		break;
+	case SPRN_NSPD:
+		spr->val = mfspr(SPRN_NSPD);
+		break;
+	case SPRN_NSPC:
+		spr->val = mfspr(SPRN_NSPC);
 		break;
 	case SPRN_DEVENT:
 		spr->val = mfspr(SPRN_DEVENT);
@@ -88,6 +176,7 @@ static void _read_spr(void *info)
 		spr->val = mfspr(SPRN_NPIDR);
 		break;
 	default:
+		printk(KERN_ERR "Read of unknown SPR(%d) attempted\n", spr->spr);
 		break;
 	};
 }
@@ -112,17 +201,55 @@ static void _write_spr(void *info)
 	case SPRN_DBCR4:
 		mtspr(SPRN_DBCR4, spr->val);
 		break;
+#if defined(CORE_E6500)
+	case SPRN_DBCR5:
+		mtspr(SPRN_DBCR5, spr->val);
+		break;
+	case SPRN_DBRR0:
+		mtspr(SPRN_DBRR0, spr->val);
+		break;
+	case SPRN_EDBRAC0:
+		mtspr(SPRN_EDBRAC0, spr->val);
+		break;
+#endif
 	case SPRN_IAC1:
 		mtspr(SPRN_IAC1, spr->val);
 		break;
 	case SPRN_IAC2:
 		mtspr(SPRN_IAC2, spr->val);
 		break;
-	case SPRN_DAC1:
+#if defined(CORE_E6500)
+	case SPRN_IAC3:
+		mtspr(SPRN_IAC3, spr->val);
+		break;
+	case SPRN_IAC4:
+		mtspr(SPRN_IAC4, spr->val);
+		break;
+	case SPRN_IAC5:
+		mtspr(SPRN_IAC5, spr->val);
+		break;
+	case SPRN_IAC6:
+		mtspr(SPRN_IAC6, spr->val);
+		break;
+	case SPRN_IAC7:
+		mtspr(SPRN_IAC7, spr->val);
+		break;
+	case SPRN_IAC8:
+		mtspr(SPRN_IAC8, spr->val);
+		break;
+#endif
+		case SPRN_DAC1:
 		mtspr(SPRN_DAC1, spr->val);
 		break;
 	case SPRN_DAC2:
 		mtspr(SPRN_DAC2, spr->val);
+		break;
+	case SPRN_NSPD:
+		mtspr(SPRN_NSPD, spr->val);
+		break;
+	case SPRN_NSPC:
+		mtspr(SPRN_NSPC, spr->val);
+		isync();
 		break;
 	case SPRN_DEVENT:
 		mtspr(SPRN_DEVENT, spr->val);
@@ -134,6 +261,7 @@ static void _write_spr(void *info)
 		mtspr(SPRN_NPIDR, spr->val);
 		break;
 	default:
+		printk(KERN_ERR "Write of unknown SPR(%d) attempted\n", spr->spr);
 		break;
 	};
 }

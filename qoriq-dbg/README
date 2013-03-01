@@ -1,4 +1,4 @@
-qoriq-debug Version 1.2
+qoriq-debug Version 1.4
 
 Introduction:
 
@@ -19,13 +19,13 @@ This module will map the QorIQ Debug registers in the DCSR memory space into fil
 in the debugfs file system. The debugfs file system must be mounted on the target file system.
 
 Edit /etc/fstab and add the line below.
-debugfs /mnt/debugfs debugfs defaults 0 0
+debugfs /sys/kernel/debug debugfs defaults 0 0
 
 On target, execute:
 	mount debugfs 
 
-This version requires that the kernel contain device tree entries for the
-DCSR based NPC trace buffer for that feature to be available.
+This module requires that the kernel contain device tree entries for the
+DCSR based components.
 
 Preferred Build Method:
 To cross build from the host using the Makefile
@@ -54,7 +54,7 @@ Important! Change the paths to reflect your Linux source and rootfs paths.
 make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /path/to/linux M=$PWD modules
 This will create the module (*.ko) in the source directory ($PWD).
 
-e.g. make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /home/user/bsp/ltib/rpm/BUILD/linux M=$PWD modules
+e.g. make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /home/user/linux M=$PWD modules
 
 To install into the rootfs
 
@@ -62,5 +62,5 @@ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /path/to/linux INSTALL_MOD
 Installation default is in /lib/modules/<kernel-version>/extra, but must be prefixed with INSTALL_MOD_PATH
 On target execute "depmod -a" to configure the modprobe config files.
 
-e.g. make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /home/user/bsp/ltib/rpm/BUILD/linux INSTALL_MOD_PATH=/srv/nfsroot/p4080 M=$PWD modules_install
+e.g. make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -C /home/user/linux INSTALL_MOD_PATH=/srv/nfsroot/p4080 M=$PWD modules_install
 

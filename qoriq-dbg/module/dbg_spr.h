@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010, 2011, 2012, 2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -23,14 +23,53 @@
 #define DBG_SPR_H
 
 #include "linux/types.h"
+#include "asm/reg_fsl_emb.h"
+#include "common.h"
 
-/* define the number of Special Purpose Registers per core */
-#define NUM_SPRS_PER_CORE 12
-
-//define SPRN_DBCR4	563	/* Debug Control Register 4 */
+#define SPRN_IAC5	565	/* Instr Addr Compare */
+#define SPRN_IAC6	566	/* Instr Addr Compare */
+#define SPRN_IAC7	567	/* Instr Addr Compare */
+#define SPRN_IAC8	568	/* Instr Addr Compare */
 #define SPRN_DEVENT	975	/* Debug Event Select Register */
 #define SPRN_DDAM	576	/* Debug Data Acquisition Message Register */
 #define SPRN_NPIDR	517	/* Nexus Process ID Register */
+#define SPRN_NSPD	983	/* Nexus SPR Data Register */
+#define SPRN_NSPC	984	/* Nexus SPR Config Register */
+#define SPRN_DBRR0	700	/* Debug Resource Request Register */
+#define SPRN_EDBRAC0	638	/* Debug Resource Request Register */
+#define SPRN_DBCR5	564	/* Debug Control Register 5 */
+
+/* define the SPRs to be used */
+enum SPR {
+	SPR_DBSR,
+	SPR_DBCR0,
+	SPR_DBCR1,
+	SPR_DBCR2,
+	SPR_DBCR4,
+#if defined(CORE_E6500)
+	SPR_DBCR5,
+	SPR_DBRR0,
+	SPR_EDBRAC0,
+#endif
+	SPR_IAC1,
+	SPR_IAC2,
+#if defined(CORE_E6500)
+	SPR_IAC3,
+	SPR_IAC4,
+	SPR_IAC5,
+	SPR_IAC6,
+	SPR_IAC7,
+	SPR_IAC8,
+#endif
+	SPR_DAC1,
+	SPR_DAC2,
+	SPR_NSPD,
+	SPR_NSPC,
+	SPR_DEVENT,
+	SPR_DDAM,
+	SPR_NPIDR,
+	SPR_MAX /* number of SPRs */
+};
 
 /* Define a data group that contains the following */
 struct spr_register {
@@ -44,10 +83,10 @@ struct spr_register {
 #endif
 };
 
+/* initialize an array of spr_register */
+void spr_reg_init(struct spr_register *regs, int core_id);
+
 /* define the file ops for the SPRs */
 extern const struct file_operations spr_fops;
-
-/* Listing of all SPRs per core */
-extern const struct spr_register spr_data[];
 
 #endif /* DBG_SPR_H */

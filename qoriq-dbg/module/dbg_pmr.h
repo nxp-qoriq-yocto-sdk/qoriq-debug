@@ -23,22 +23,50 @@
 #define DBG_PERFMON_H
 
 #include "linux/types.h"
+#include "asm/reg_fsl_emb.h"
+#include "common.h"
 
-/* define the number of Perf Mon registers per core */
-#define NUM_PMRS_PER_CORE 13
+/* define the PMRs to be used */
+enum PMR {
+	PMR_PMC0,
+	PMR_PMC1,
+	PMR_PMC2,
+	PMR_PMC3,
+#if defined(CORE_E6500)
+	PMR_PMC4,
+	PMR_PMC5,
+#endif
+	PMR_PMLCA0,
+	PMR_PMLCA1,
+	PMR_PMLCA2,
+	PMR_PMLCA3,
+#if defined(CORE_E6500)
+	PMR_PMLCA4,
+	PMR_PMLCA5,
+#endif
+	PMR_PMLCB0,
+	PMR_PMLCB1,
+	PMR_PMLCB2,
+	PMR_PMLCB3,
+#if defined(CORE_E6500)
+	PMR_PMLCB4,
+	PMR_PMLCB5,
+#endif
+	PMR_PMGC0,
+	PMR_MAX /* number of PMRs */
+};
 
 /* Define a data group that contains the following */
-struct perfmon_register {
+struct pmr_register {
 	int core;		/* Core number */
-	int read_pmr;		/* PMR to read */
-	int write_pmr;		/* PMR to write */
+	int pmr;		/* PMR number */
 	u32 val;		/* value to read/write */
 };
 
+/* initialize an array of pmr_register */
+void pmr_reg_init(struct pmr_register *regs, int core_id);
+
 /* define the file ops for the PerfMon registers */
 extern const struct file_operations perfmon_fops;
-
-/* Listing of all PMRs per core */
-extern const struct perfmon_register pm_data[];
 
 #endif /* DBG_PERFMON_H */
