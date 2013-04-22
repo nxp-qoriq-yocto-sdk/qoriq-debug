@@ -35,4 +35,7 @@ int cpu_init_fn(struct dbg_device *dev);
 int dbg_cpu_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
+int dbg_cpu_e6500_init(struct dentry *parent_dentry,
+				struct dbg_device *dev);
+
 #endif  /* DBG_CPU_H */

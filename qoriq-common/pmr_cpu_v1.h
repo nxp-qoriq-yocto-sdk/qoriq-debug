@@ -37,12 +37,10 @@
 #define E500_PMLCA_CE_MASK		0x04000000
 #define E500_PMLCA_CE_SHIFT		26
 
-#ifdef CORE_E6500
+#ifdef CORE_E6500 /* CORE_E6500 must be defined externally */
 #define E500_PMLCA_EVENT_MASK		0x01FF0000
-#define E500_PMLCA_EVENT_END		0x200
 #else
 #define E500_PMLCA_EVENT_MASK		0x00FF0000
-#define E500_PMLCA_EVENT_END		0x100
 #endif
 #define E500_PMLCA_EVENT_SHIFT		16
 

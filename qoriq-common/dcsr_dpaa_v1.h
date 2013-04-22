@@ -24,7 +24,7 @@
 
 #include "common.h"
 
-/* Number of QMAN Softare Portals */
+/* Number of QMAN Software Portals */
 #define DPAA_NO_OF_QMAN_SP		10
 /* Number of QMAN Direct Connect Portals */
 #define DPAA_NO_OF_QMAN_DCP		4

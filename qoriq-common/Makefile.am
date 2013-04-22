@@ -31,7 +31,9 @@ EXTRA_DIST= \
 	dcsr_cpu_v1.h \
 	dcsr_ddr_v1.h \
 	dcsr_dpaa_v1.h \
+	dcsr_dpaa_v2.h \
 	dcsr_epu_v1.h \
+	dcsr_epu_v2.h \
 	dcsr_nal_v1.h \
 	dcsr_npc_v1.h \
 	dcsr_npc_v2.h \

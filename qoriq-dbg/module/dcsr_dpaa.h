@@ -25,11 +25,16 @@
 #include "dbg_private.h"
 #include "dbg_device.h"
 #include "dcsr_dpaa_v1.h"
+#include "dcsr_dpaa_v2.h"
 
 #define DEBUGFS_DPAA_NAME "dpaa"
 
 /* Driver Initialization Functions */
 extern int dcsr_dpaa_init(struct dentry *parent_dentry,
+				struct dbg_device *dev);
+
+/* Driver Initialization Functions */
+extern int dcsr_dpaa_v2_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
 #endif  /* DCSR_DPAA_H */

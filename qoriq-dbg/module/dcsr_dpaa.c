@@ -92,3 +92,109 @@ int dcsr_dpaa_init(struct dentry *parent_dentry, struct dbg_device *dev)
 
 	return 0;
 }
+/* Driver Initialization Function */
+int dcsr_dpaa_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
+{
+	int i;
+	struct dentry *current_dentry;
+	struct dentry *de;
+	struct dpaa_v2 *ptr = (struct dpaa_v2 *)dev->mem_ptr[0];
+	char reg_name[DBFS_REG_NAME_LEN];
+
+	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev,
+					DEBUGFS_DPAA_NAME);
+
+	/* Debug status control */
+	DBGFS_CREATE_RW_X32("dpehcr", current_dentry, &ptr->dpehcr);
+	DBGFS_CREATE_RW_X32("dprcr", current_dentry, &ptr->dprcr);
+	DBGFS_CREATE_RW_X32("fmhsr0", current_dentry, &ptr->fmhsr0);
+	DBGFS_CREATE_RW_X32("fmhsr1", current_dentry, &ptr->fmhsr1);
+
+	for (i = 0; i < DPAA_V2_NO_OF_HALTSTATUS; ++i) {
+		sprintf(reg_name, "dppehsr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dppehsr[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_QMAN_DCP; ++i) {
+		sprintf(reg_name, "qdcphsr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->qdcphsr[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_QMAN_SP; ++i) {
+		sprintf(reg_name, "qsphsr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->qsphsr[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_QOER; ++i) {
+		sprintf(reg_name, "dpqoer%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpqoer[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_FOER; ++i) {
+		sprintf(reg_name, "dpfoer%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpfoer[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_EGCR; ++i) {
+		sprintf(reg_name, "dpegcr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpegcr[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_GPC; ++i) {
+		sprintf(reg_name, "dpgpccr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpgpcmp[i].ccr);
+		sprintf(reg_name, "dpgpcmr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpgpcmp[i].cmr);
+		sprintf(reg_name, "dpgpcvr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpgpcmp[i].cvr);
+	}
+	DBGFS_CREATE_RW_X32("dpepgcr", current_dentry, &ptr->dpepgcr);
+	for (i = 0; i < DPAA_V2_NO_OF_DPRESCR; ++i) {
+		sprintf(reg_name, "dprescr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dprescr[i]);
+	}
+	DBGFS_CREATE_RW_X32("dpckstpcr", current_dentry, &ptr->dpckstpcr);
+	for (i = 0; i < DPAA_V2_NO_OF_DPPESCRS; ++i) {
+		sprintf(reg_name, "dppescr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dppescr[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_GCR; ++i) {
+		sprintf(reg_name, "dpgcpr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpgc[i].pr);
+		sprintf(reg_name, "dpgcer%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpgc[i].er);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_SPGCR; ++i) {
+		sprintf(reg_name, "dpspgcrb%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpspgcrb[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_GCR; ++i) {
+		sprintf(reg_name, "dpgacr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dpgacr[i]);
+	}
+	DBGFS_CREATE_RW_X32("dptarm", current_dentry, &ptr->dptarm);
+	for (i = 0; i < DPAA_V2_NO_OF_TGCR; ++i) {
+		sprintf(reg_name, "dptgcr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dptgcr[i]);
+	}
+	for (i = 0; i < DPAA_V2_NO_OF_TFTCR; ++i) {
+		sprintf(reg_name, "dptftcr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->dptftcr[i]);
+	}
+	DBGFS_CREATE_RW_X32("dpwmsk", current_dentry, &ptr->dpwmsk);
+	DBGFS_CREATE_RW_X32("dpctscr", current_dentry, &ptr->dpctscr);
+	DBGFS_CREATE_RW_X32("dpctdcr", current_dentry, &ptr->dpctdcr);
+
+	return 0;
+}

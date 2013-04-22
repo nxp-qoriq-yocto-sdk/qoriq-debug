@@ -39,10 +39,11 @@ typedef uint8_t u8;
 #include "ccsr_qman_v1.h"
 #include "dcsr_corenet_v1.h"
 #include "dcsr_cpu_v1.h"
-#include "dcsr_cpu_v2.h"
 #include "dcsr_ddr_v1.h"
 #include "dcsr_dpaa_v1.h"
+#include "dcsr_dpaa_v2.h"
 #include "dcsr_epu_v1.h"
+#include "dcsr_epu_v2.h"
 #include "dcsr_nal_v1.h"
 #include "dcsr_npc_v1.h"
 #include "dcsr_nxc_v1.h"
@@ -95,15 +96,36 @@ void testptr()
 /* test some FMAN addresses */
 void run_test_fman_mmap()
 {
-	struct fman *p_fman;
-	p_fman = 0;
+	struct fman *p;
+	p = 0;
 
-	assert( (uint32_t)&p_fman->key_gen.dJtK[0][0].cr == 0x000c1210 );
-	assert( (uint32_t)&p_fman->key_gen.dJtK[0][1].cr == 0x000c1220 );
-	assert( (uint32_t)&p_fman->key_gen.dJtK[0][2].cr == 0x000c1230 );
-	assert( (uint32_t)&p_fman->key_gen.dJtK[0][3].cr == 0x000c1240 );
-	assert( (uint32_t)&p_fman->key_gen.dJtK[0][4].cr == 0x000c1250 );
-	assert( (uint32_t)&p_fman->key_gen.dJtK[1][0].cr == 0x000c1260 );
+	assert( (uint32_t)&p->key_gen.dJtK[0][0].cr == 0x000c1210 );
+	assert( (uint32_t)&p->key_gen.dJtK[0][1].cr == 0x000c1220 );
+	assert( (uint32_t)&p->key_gen.dJtK[0][2].cr == 0x000c1230 );
+	assert( (uint32_t)&p->key_gen.dJtK[0][3].cr == 0x000c1240 );
+	assert( (uint32_t)&p->key_gen.dJtK[0][4].cr == 0x000c1250 );
+	assert( (uint32_t)&p->key_gen.dJtK[1][0].cr == 0x000c1260 );
+}
+
+void run_test_dpaa_v2_mmap()
+{
+	struct dpaa_v2 *p;
+	p = 0;
+
+	assert( (uint32_t)&p->fmhsr1 == 0x28 );
+	assert( (uint32_t)&p->reserved4[0] == 0x1c8 );
+	assert( (uint32_t)&p->dpqoer[0] == 0x500 );
+	assert( (uint32_t)&p->dpgpcmp[0].ccr == 0x580 );
+	assert( (uint32_t)&p->dpepgcr == 0x5c0 );
+	assert( (uint32_t)&p->reserved8[0] == 0x5d0 );
+	assert( (uint32_t)&p->dpckstpcr == 0x5fc );
+	assert( (uint32_t)&p->reserved10[0] == 0x720 );
+	assert( (uint32_t)&p->dpspgcrb[3] == 0x79c );
+	assert( (uint32_t)&p->dptarm == 0x800 );
+	assert( (uint32_t)&p->dptftcr[0] == 0x820 );
+	assert( (uint32_t)&p->dptftcr[3] == 0x82c );
+	assert( (uint32_t)&p->dpwmsk == 0x900 );
+	assert( (uint32_t)&p->dpctdcr == 0xA04 );
 }
 
 int main(int argc, char **argv)
@@ -117,6 +139,9 @@ int main(int argc, char **argv)
 
 	/* test some FMAN addresses */
 	run_test_fman_mmap();
+
+	/* test some DPAA addresses */
+	run_test_dpaa_v2_mmap();
 
 	printf("qoriq-common ALL complete\n");
 	return 0;

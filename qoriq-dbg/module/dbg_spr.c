@@ -34,11 +34,9 @@ void spr_reg_init(struct spr_register *regs, int core_id)
 	regs[SPR_DBCR1].spr = SPRN_DBCR1;
 	regs[SPR_DBCR2].spr = SPRN_DBCR2;
 	regs[SPR_DBCR4].spr = SPRN_DBCR4;
-#if defined(CORE_E6500)
 	regs[SPR_DBCR5].spr = SPRN_DBCR5;
 	regs[SPR_DBRR0].spr = SPRN_DBRR0;
 	regs[SPR_EDBRAC0].spr = SPRN_EDBRAC0;
-#endif
 	regs[SPR_IAC1].spr = SPRN_IAC1;
 #ifdef CONFIG_PPC64
 	regs[SPR_IAC1].size64 = 1;
@@ -47,7 +45,6 @@ void spr_reg_init(struct spr_register *regs, int core_id)
 #ifdef CONFIG_PPC64
 	regs[SPR_IAC2].size64 = 1;
 #endif
-#if defined(CORE_E6500)
 	regs[SPR_IAC3].spr = SPRN_IAC3;
 	regs[SPR_IAC3].size64 = 1;
 	regs[SPR_IAC4].spr = SPRN_IAC4;
@@ -60,7 +57,6 @@ void spr_reg_init(struct spr_register *regs, int core_id)
 	regs[SPR_IAC7].size64 = 1;
 	regs[SPR_IAC8].spr = SPRN_IAC8;
 	regs[SPR_IAC8].size64 = 1;
-#endif /* defined(CORE_E6500) */
 	regs[SPR_DAC1].spr = SPRN_DAC1;
 #ifdef CONFIG_PPC64
 	regs[SPR_DAC1].size64 = 1;
@@ -117,7 +113,6 @@ static void _read_spr(void *info)
 	case SPRN_DBCR4:
 		spr->val = mfspr(SPRN_DBCR4);
 		break;
-#if defined(CORE_E6500)
 	case SPRN_DBCR5:
 		spr->val = mfspr(SPRN_DBCR5);
 		break;
@@ -127,14 +122,12 @@ static void _read_spr(void *info)
 	case SPRN_EDBRAC0:
 		spr->val = mfspr(SPRN_EDBRAC0);
 		break;
-#endif
 	case SPRN_IAC1:
 		spr->val = mfspr(SPRN_IAC1);
 		break;
 	case SPRN_IAC2:
 		spr->val = mfspr(SPRN_IAC2);
 		break;
-#if defined(CORE_E6500)
 	case SPRN_IAC3:
 		spr->val = mfspr(SPRN_IAC3);
 		break;
@@ -153,7 +146,6 @@ static void _read_spr(void *info)
 	case SPRN_IAC8:
 		spr->val = mfspr(SPRN_IAC8);
 		break;
-#endif
 	case SPRN_DAC1:
 		spr->val = mfspr(SPRN_DAC1);
 		break;
@@ -201,7 +193,6 @@ static void _write_spr(void *info)
 	case SPRN_DBCR4:
 		mtspr(SPRN_DBCR4, spr->val);
 		break;
-#if defined(CORE_E6500)
 	case SPRN_DBCR5:
 		mtspr(SPRN_DBCR5, spr->val);
 		break;
@@ -211,14 +202,12 @@ static void _write_spr(void *info)
 	case SPRN_EDBRAC0:
 		mtspr(SPRN_EDBRAC0, spr->val);
 		break;
-#endif
 	case SPRN_IAC1:
 		mtspr(SPRN_IAC1, spr->val);
 		break;
 	case SPRN_IAC2:
 		mtspr(SPRN_IAC2, spr->val);
 		break;
-#if defined(CORE_E6500)
 	case SPRN_IAC3:
 		mtspr(SPRN_IAC3, spr->val);
 		break;
@@ -237,8 +226,7 @@ static void _write_spr(void *info)
 	case SPRN_IAC8:
 		mtspr(SPRN_IAC8, spr->val);
 		break;
-#endif
-		case SPRN_DAC1:
+	case SPRN_DAC1:
 		mtspr(SPRN_DAC1, spr->val);
 		break;
 	case SPRN_DAC2:

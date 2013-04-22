@@ -34,26 +34,20 @@ void pmr_reg_init(struct pmr_register *regs, int core_id)
 	regs[PMR_PMC1].pmr = PMRN_PMC1;
 	regs[PMR_PMC2].pmr = PMRN_PMC2;
 	regs[PMR_PMC3].pmr = PMRN_PMC3;
-#if defined(CORE_E6500)
 	regs[PMR_PMC4].pmr = PMRN_PMC4;
 	regs[PMR_PMC5].pmr = PMRN_PMC5;
-#endif /* defined(CORE_E6500) */
 	regs[PMR_PMLCA0].pmr = PMRN_PMLCA0;
 	regs[PMR_PMLCA1].pmr = PMRN_PMLCA1;
 	regs[PMR_PMLCA2].pmr = PMRN_PMLCA2;
 	regs[PMR_PMLCA3].pmr = PMRN_PMLCA3;
-#if defined(CORE_E6500)
 	regs[PMR_PMLCA4].pmr = PMRN_PMLCA4;
 	regs[PMR_PMLCA5].pmr = PMRN_PMLCA5;
-#endif /* defined(CORE_E6500) */
 	regs[PMR_PMLCB0].pmr = PMRN_PMLCB0;
 	regs[PMR_PMLCB1].pmr = PMRN_PMLCB1;
 	regs[PMR_PMLCB2].pmr = PMRN_PMLCB2;
 	regs[PMR_PMLCB3].pmr = PMRN_PMLCB3;
-#if defined(CORE_E6500)
 	regs[PMR_PMLCB4].pmr = PMRN_PMLCB4;
 	regs[PMR_PMLCB5].pmr = PMRN_PMLCB5;
-#endif /* defined(CORE_E6500) */
 	regs[PMR_PMGC0].pmr = PMRN_PMGC0;
 }
 
@@ -94,14 +88,12 @@ static void _read_pmr(void *info)
 	case PMRN_PMC3:
 		pm->val = mfpmr(PMRN_PMC3);
 		break;
-#if defined(CORE_E6500)
 	case PMRN_PMC4:
 		pm->val = mfpmr(PMRN_PMC4);
 		break;
 	case PMRN_PMC5:
 		pm->val = mfpmr(PMRN_PMC5);
 		break;
-#endif
 	case PMRN_PMLCA0:
 		pm->val = mfpmr(PMRN_PMLCA0);
 		break;
@@ -114,14 +106,12 @@ static void _read_pmr(void *info)
 	case PMRN_PMLCA3:
 		pm->val = mfpmr(PMRN_PMLCA3);
 		break;
-#if defined(CORE_E6500)
 	case PMRN_PMLCA4:
 		pm->val = mfpmr(PMRN_PMLCA4);
 		break;
 	case PMRN_PMLCA5:
 		pm->val = mfpmr(PMRN_PMLCA5);
 		break;
-#endif
 	case PMRN_PMLCB0:
 		pm->val = mfpmr(PMRN_PMLCB0);
 		break;
@@ -134,14 +124,12 @@ static void _read_pmr(void *info)
 	case PMRN_PMLCB3:
 		pm->val = mfpmr(PMRN_PMLCB3);
 		break;
-#if defined(CORE_E6500)
 	case PMRN_PMLCB4:
 		pm->val = mfpmr(PMRN_PMLCB4);
 		break;
 	case PMRN_PMLCB5:
 		pm->val = mfpmr(PMRN_PMLCB5);
 		break;
-#endif
 	case PMRN_PMGC0:
 		pm->val = mfpmr(PMRN_PMGC0);
 		break;
@@ -167,14 +155,12 @@ static void _write_pmr(void *info)
 	case PMRN_PMC3:
 		mtpmr(PMRN_PMC3, pm->val);
 		break;
-#if defined(CORE_E6500)
 	case PMRN_PMC4:
 		mtpmr(PMRN_PMC4, pm->val);
 		break;
 	case PMRN_PMC5:
 		mtpmr(PMRN_PMC5, pm->val);
 		break;
-#endif
 	case PMRN_PMLCA0:
 		mtpmr(PMRN_PMLCA0, pm->val);
 		break;
@@ -187,14 +173,12 @@ static void _write_pmr(void *info)
 	case PMRN_PMLCA3:
 		mtpmr(PMRN_PMLCA3, pm->val);
 		break;
-#if defined(CORE_E6500)
 	case PMRN_PMLCA4:
 		mtpmr(PMRN_PMLCA4, pm->val);
 		break;
 	case PMRN_PMLCA5:
 		mtpmr(PMRN_PMLCA5, pm->val);
 		break;
-#endif
 	case PMRN_PMLCB0:
 		mtpmr(PMRN_PMLCB0, pm->val);
 		break;
@@ -207,14 +191,12 @@ static void _write_pmr(void *info)
 	case PMRN_PMLCB3:
 		mtpmr(PMRN_PMLCB3, pm->val);
 		break;
-#if defined(CORE_E6500)
 	case PMRN_PMLCB4:
 		mtpmr(PMRN_PMLCB4, pm->val);
 		break;
 	case PMRN_PMLCB5:
 		mtpmr(PMRN_PMLCB5, pm->val);
 		break;
-#endif
 	case PMRN_PMGC0:
 		mtpmr(PMRN_PMGC0, pm->val);
 		break;

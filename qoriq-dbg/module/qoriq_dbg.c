@@ -64,7 +64,7 @@ static struct dbg_device *alloc_device(void)
 }
 
 /* Allocate and add all compatible devices to the dbg_device list */
-static void add_compatible_devices(const char* compatible,
+static int add_compatible_devices(const char* compatible,
 	const char *name,
 	dev_init_fn dev_init, dbgfs_init_fn dbgfs_init)
 {
@@ -72,6 +72,7 @@ static void add_compatible_devices(const char* compatible,
 	struct dbg_device *dev;
 	int index = 0;
 	int i;
+	int num_found = 0;
 
 	for_each_compatible_node(np, NULL, compatible) {
 		dev = alloc_device();
@@ -92,7 +93,10 @@ static void add_compatible_devices(const char* compatible,
 		dev->np = np;
 		dev->dt_idx = index++;
 		list_add(&dev->list, &dbg_devs);
+		num_found++;
 	}
+
+	return num_found;
 }
 
 static void remove_devices(void)
@@ -127,31 +131,35 @@ static int dcsr_probe(struct platform_device *pdev)
 {
 	struct dbg_device *dev;
 	int ret = 0;
+	int found;
 
-#if defined(CORE_E6500)
-	add_compatible_devices("fsl,dcsr-e6500-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
-	add_compatible_devices("fsl,dcsr-cnpc", DEBUGFS_CNPC_NAME, NULL, dcsr_cnpc_init);
-	add_compatible_devices("fsl,dcsr-snpc", DEBUGFS_SNPC_NAME, NULL, dcsr_snpc_init);
-	add_compatible_devices("fsl,t4240-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
-	add_compatible_devices("fsl,b4860-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
-	add_compatible_devices("fsl,b4420-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
-#else
-	/* discover and allocate all devices from the device tree */
-	add_compatible_devices("fsl,bman", DEBUGFS_BMAN_NAME, NULL, ccsr_bman_init);
-	add_compatible_devices("fsl,fman", DEBUGFS_FMAN_NAME, NULL, ccsr_fman_init);
-	add_compatible_devices("fsl,qman", DEBUGFS_QMAN_NAME, NULL, ccsr_qman_init);
-	add_compatible_devices("fsl,dcsr-e500mc-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
-	add_compatible_devices("fsl,dcsr-e5500-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
-	add_compatible_devices("fsl,dcsr-corenet", DEBUGFS_CORENET_NAME, NULL, dcsr_corenet_init);
-	add_compatible_devices("fsl,dcsr-ddr", DEBUGFS_DDR_NAME, NULL, dcsr_ddr_init);
-	add_compatible_devices("fsl,dcsr-dpaa", DEBUGFS_DPAA_NAME, NULL, dcsr_dpaa_init);
-	add_compatible_devices("fsl,dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
-	add_compatible_devices("fsl,dcsr-nal", DEBUGFS_NAL_NAME, NULL, dcsr_nal_init);
-	add_compatible_devices("fsl,dcsr-npc", DEBUGFS_NPC_NAME, NULL, dcsr_npc_init);
-	add_compatible_devices("fsl,dcsr-nxc", DEBUGFS_NXC_NAME, NULL, dcsr_nxc_init);
-	add_compatible_devices("fsl,dcsr-ocn", DEBUGFS_OCN_NAME, NULL, dcsr_ocn_init);
-	add_compatible_devices("fsl,dcsr-rcpm", DEBUGFS_RCPM_NAME, NULL, dcsr_rcpm_init);
-#endif
+	found = add_compatible_devices("fsl,dcsr-e6500-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_e6500_init);
+	if (found) { /* e6500 based platform */
+		add_compatible_devices("fsl,dcsr-cnpc", DEBUGFS_CNPC_NAME, NULL, dcsr_cnpc_init);
+		add_compatible_devices("fsl,dcsr-snpc", DEBUGFS_SNPC_NAME, NULL, dcsr_snpc_init);
+		add_compatible_devices("fsl,t4240-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_v2_init);
+		add_compatible_devices("fsl,b4860-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_v2_init);
+		add_compatible_devices("fsl,b4420-dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_v2_init);
+		add_compatible_devices("fsl,t4240-dcsr-dpaa", DEBUGFS_DPAA_NAME, NULL, dcsr_dpaa_v2_init);
+		add_compatible_devices("fsl,b4860-dcsr-dpaa", DEBUGFS_DPAA_NAME, NULL, dcsr_dpaa_v2_init);
+		add_compatible_devices("fsl,b4420-dcsr-dpaa", DEBUGFS_DPAA_NAME, NULL, dcsr_dpaa_v2_init);
+	} else {
+		/* discover and allocate all devices from the device tree */
+		add_compatible_devices("fsl,bman", DEBUGFS_BMAN_NAME, NULL, ccsr_bman_init);
+		add_compatible_devices("fsl,fman", DEBUGFS_FMAN_NAME, NULL, ccsr_fman_init);
+		add_compatible_devices("fsl,qman", DEBUGFS_QMAN_NAME, NULL, ccsr_qman_init);
+		add_compatible_devices("fsl,dcsr-e500mc-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
+		add_compatible_devices("fsl,dcsr-e5500-sb-proxy", DEBUGFS_CPU_NAME, cpu_init_fn, dbg_cpu_init);
+		add_compatible_devices("fsl,dcsr-corenet", DEBUGFS_CORENET_NAME, NULL, dcsr_corenet_init);
+		add_compatible_devices("fsl,dcsr-ddr", DEBUGFS_DDR_NAME, NULL, dcsr_ddr_init);
+		add_compatible_devices("fsl,dcsr-dpaa", DEBUGFS_DPAA_NAME, NULL, dcsr_dpaa_init);
+		add_compatible_devices("fsl,dcsr-epu", DEBUGFS_EPU_NAME, NULL, dcsr_epu_init);
+		add_compatible_devices("fsl,dcsr-nal", DEBUGFS_NAL_NAME, NULL, dcsr_nal_init);
+		add_compatible_devices("fsl,dcsr-npc", DEBUGFS_NPC_NAME, NULL, dcsr_npc_init);
+		add_compatible_devices("fsl,dcsr-nxc", DEBUGFS_NXC_NAME, NULL, dcsr_nxc_init);
+		add_compatible_devices("fsl,dcsr-ocn", DEBUGFS_OCN_NAME, NULL, dcsr_ocn_init);
+		add_compatible_devices("fsl,dcsr-rcpm", DEBUGFS_RCPM_NAME, NULL, dcsr_rcpm_init);
+	}
 
 	/* create the root directory in debugfs */
 	dbgfs_root_dentry = debugfs_create_dir(DBGFS_ROOT_NAME, NULL);

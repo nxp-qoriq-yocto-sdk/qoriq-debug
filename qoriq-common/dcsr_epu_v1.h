@@ -28,20 +28,71 @@
 #define EPU_NO_OF_SCU_EVENTS		16
 #define EPU_NO_OF_COUNTER_GROUPS	4
 #define EPU_NO_OF_EVENT_GROUPS		3
-#define EPU_NO_PROC_INTRPTS		4
+#define EPU_NO_PROC_INTRPTS		2
 
-#ifdef GEN2_DEBUG
-#define EPU_MAX_PROC_INTRPTS		EPU_NO_PROC_INTRPTS
-#define EPU_NO_EVT_PIN_REGS		10
-#define EPU_NO_FSM_STATES		8
-#define EPU_NO_RESRV_REGS		60
-#define EPU_NO_SEMA_REGS		4
-#else
-#define EPU_MAX_PROC_INTRPTS		2
-#endif
+/* control block for SCU */
+struct scu_ctrl {
+	u32 epsmcr;
+	u32 reserved;
+};
 
-/* size of epu struct */
-#define EPU_STRUCT_SIZE			0x1000
+/* structure defines the memory map of the EPU control block */
+struct epu {
+	/* Global Control Register */
+	u32 epgcr;
+	u8 reserved1[0x10-0x04];
+	/* Event Status Register */
+	u32 epesr;
+	u8 reserved2[0x20-0x14];
+	/* Interrupt Status Registers */
+	u32 episr[EPU_NO_PROC_INTRPTS];
+	u8 reserved2a[0x30-0x28];
+	/* Counter Interrupt Status Register */
+	u32 epctrisr;
+	u8 reserved3[0x40-0x34];
+	/* Counter Capture Status Register */
+	u32 epctrcsr;
+	u8 reserved4[0x50-0x44];
+	/* EVT Pin Direction Control Register */
+	u32 epepdcr;
+	u8 reserved6[0x100-0x54];
+	/* Event Processor Input Mux Control Register */
+	u32 epimcr[EPU_NO_OF_COUNTERS];
+	u8 reserved7[0x200-0x180];
+	/* Event Processor SCU MUX Control Registers */
+	struct scu_ctrl scu_ctrl[EPU_NO_OF_SCU_EVENTS];
+	u8 reserved8[0x300-0x280];
+	/* Event Processor Event Control Registers */
+	u32 epecr[EPU_NO_OF_SCU_EVENTS];
+	u8 reserved9[0x400-0x340];
+	/* Event Processor Action Control Registers */
+	u32 epacr[EPU_NO_OF_SCU_EVENTS];
+	u8 reserved10[0x480-0x440];
+	/* Event Processor Group Action Control Registers */
+	u32 epgacr[EPU_NO_OF_SCU_EVENTS];
+	u8 reserved11[0x540-0x4c0];
+	/* Event Processor Counter Group Configuration Registers */
+	u32 epctrgcr[EPU_NO_OF_COUNTER_GROUPS];
+	u8 reserved12[0x580-0x550];
+	/* Event Processor Event Group Configuration Registers */
+	u32 epegcr[EPU_NO_OF_EVENT_GROUPS];
+	u8 reserved13[0x600-0x58c];
+	u8 reserved15[0x800-0x600];
+	/* Event Processor Counter Control Registers */
+	u32 epccr[EPU_NO_OF_COUNTERS];
+	u8 reserved16[0x900-0x880];
+	/* Event Processor Counter Compare Registers */
+	u32 epcmpr[EPU_NO_OF_COUNTERS];
+	u8 reserved17[0xA00-0x980];
+	/* Event Processor Counter Registers */
+	u32 epctr[EPU_NO_OF_COUNTERS];
+	u8 reserved18[0xB00-0xA80];
+	/* Event Processor Counter Capture Registers */
+	u32 epcapr[EPU_NO_OF_COUNTERS];
+	u8 reserved19[0xF00-0xB80];
+	u8 reserved20[0x1000-0xF00];
+} PACKED;
+CTASSERT(sizeof(struct epu) == 0x1000);
 
 #define EPU_EPGCR_GCE_SHIFT		0x1f
 #define EPU_EPGCR_GCE_MASK		0x80000000
@@ -149,97 +200,5 @@
 #define EPU_EPGACR_CONTROL_CTCC_SHIFT         0x4
 #define EPU_EPGACR_CONTROL_ERC_MASK           0x7
 #define EPU_EPGACR_CONTROL_ERC_SHIFT          0x0
-
-
-/* control block for SCU */
-struct scu_ctrl {
-	u32 epsmcr;
-	u32 reserved;
-};
-
-/* structure defines the memory map of the EPU control block */
-struct epu {
-	/* Global Control Register */
-	u32 epgcr;
-	u8 reserved1[0x10-0x04];
-	/* Event Status Register */
-	u32 epesr;
-	u8 reserved2[0x20-0x14];
-	/* Interrupt Status Registers */
-	u32 episr[EPU_NO_PROC_INTRPTS];
-	/* Counter Interrupt Status Register */
-	u32 epctrisr;
-	u8 reserved3[0x40-0x34];
-	/* Counter Capture Status Register */
-	u32 epctrcsr;
-	u8 reserved4[0x50-0x44];
-#ifdef GEN2_DEBUG
-	/* EVT Pin Control Register */
-	u32 epevtcr[EPU_NO_EVT_PIN_REGS];
-	u8 reserved5[0x90-0x78];
-	/* Cross Trigger Control Register */
-	u32 epxtrigcr;
-	u8 reserved6[0x100-0x94];
-#else
-	/* EVT Pin Direction Control Register */
-	u32 epepdcr;
-	u8 reserved6[0x100-0x54];
-#endif
-	/* Event Processor Input Mux Control Register */
-	u32 epimcr[EPU_NO_OF_COUNTERS];
-	u8 reserved7[0x200-0x180];
-	/* Event Processor SCU MUX Control Registers */
-	struct scu_ctrl scu_ctrl[EPU_NO_OF_SCU_EVENTS];
-	u8 reserved8[0x300-0x280];
-	/* Event Processor Event Control Registers */
-	u32 epecr[EPU_NO_OF_SCU_EVENTS];
-	u8 reserved9[0x400-0x340];
-
-	/* Event Processor Action Control Registers */
-	u32 epacr[EPU_NO_OF_SCU_EVENTS];
-	u8 reserved10[0x480-0x440];
-	/* Event Processor Group Action Control Registers */
-	u32 epgacr[EPU_NO_OF_SCU_EVENTS];
-	u8 reserved11[0x540-0x4c0];
-	/* Event Processor Counter Group Configuration Registers */
-	u32 epctrgcr[EPU_NO_OF_COUNTER_GROUPS];
-	u8 reserved12[0x580-0x550];
-	/* Event Processor Event Group Configuration Registers */
-	u32 epegcr[EPU_NO_OF_EVENT_GROUPS];
-	u8 reserved13[0x600-0x58c];
-#ifdef GEN2_DEBUG
-	/* Event Processor FSM Status */
-	u32 epfsmsr0;
-	u8 reserved14[0x610-0x604];
-	/* Event Processor FSM Compare */
-	u32 epfsmcmpr[EPU_NO_FSM_STATES];
-	/* Event Processor FSM Control */
-	u32 epfsmcr[EPU_NO_FSM_STATES];
-	u8 reserved15[0x800-0x650];
-#else
-	u8 reserved15[0x800-0x600];
-#endif
-	/* Event Processor Counter Control Registers */
-	u32 epccr[EPU_NO_OF_COUNTERS];
-	u8 reserved16[0x900-0x880];
-	/* Event Processor Counter Compare Registers */
-	u32 epcmpr[EPU_NO_OF_COUNTERS];
-	u8 reserved17[0xA00-0x980];
-	/* Event Processor Counter Registers */
-	u32 epctr[EPU_NO_OF_COUNTERS];
-	u8 reserved18[0xB00-0xA80];
-	/* Event Processor Counter Capture Registers */
-	u32 epcapr[EPU_NO_OF_COUNTERS];
-	u8 reserved19[0xF00-0xB80];
-#ifdef GEN2_DEBUG
-	/* Event Processor Debug Reservation Register */
-	u32 eprsv[EPU_NO_RESRV_REGS];
-	/* Hardware Semaphore Register */
-	u32 ephsr[EPU_NO_SEMA_REGS];
-#else
-	u8 reserved20[0x1000-0xF00];
-#endif
-} PACKED;
-CTASSERT(sizeof(struct epu) == 0x1000);
 
 #endif /* DCSR_EPU_V1_H */

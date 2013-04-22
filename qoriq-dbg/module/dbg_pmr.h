@@ -26,32 +26,51 @@
 #include "asm/reg_fsl_emb.h"
 #include "common.h"
 
+#ifndef PMRN_PMC4
+#define PMRN_PMC4	0x014	/* Performance Monitor Counter 4 */
+#endif
+
+#ifndef PMRN_PMC5
+#define PMRN_PMC5	0x015	/* Performance Monitor Counter 5 */
+#endif
+
+#ifndef PMRN_PMLCA4
+#define PMRN_PMLCA4	0x094	/* PM Local Control A4 */
+#endif
+
+#ifndef PMRN_PMLCA5
+#define PMRN_PMLCA5	0x095	/* PM Local Control A5 */
+#endif
+
+#ifndef PMRN_PMLCB4
+#define PMRN_PMLCB4	0x114	/* PM Local Control B4 */
+#endif
+
+#ifndef PMRN_PMLCB5
+#define PMRN_PMLCB5	0x115	/* PM Local Control B5 */
+#endif
+
+
 /* define the PMRs to be used */
 enum PMR {
 	PMR_PMC0,
 	PMR_PMC1,
 	PMR_PMC2,
 	PMR_PMC3,
-#if defined(CORE_E6500)
 	PMR_PMC4,
 	PMR_PMC5,
-#endif
 	PMR_PMLCA0,
 	PMR_PMLCA1,
 	PMR_PMLCA2,
 	PMR_PMLCA3,
-#if defined(CORE_E6500)
 	PMR_PMLCA4,
 	PMR_PMLCA5,
-#endif
 	PMR_PMLCB0,
 	PMR_PMLCB1,
 	PMR_PMLCB2,
 	PMR_PMLCB3,
-#if defined(CORE_E6500)
 	PMR_PMLCB4,
 	PMR_PMLCB5,
-#endif
 	PMR_PMGC0,
 	PMR_MAX /* number of PMRs */
 };
