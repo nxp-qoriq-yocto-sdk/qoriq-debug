@@ -66,7 +66,9 @@ struct npc_v2 {
 	u32 apcr;	/* AXI Port Control Register */
 	u32 apxfr;	/* AXI Port Transfer Count Register */
 	u32 wmkr[NUM_WATERMARK_REGISTERS]; /* Target Space Water Mark Register n */
-	u8 reserved4[0xcc-0xb0];
+	u32 sbcsr;	/* Slave bus Control Status Register */
+	u32 sbrar;	/* Slave bus Read Access Register */
+	u8 reserved4[0xcc-0xb8];
 	u32 mccr;	/* tMMA Counter Control Register */
 	struct npc_mma mma[NPC_NUM_MMA_UNITS];\
 	u8 reserved5[0x1000-0x100];
@@ -92,8 +94,9 @@ struct snpc_v2 {
 	u32 stcr[NUM_STCR_REGISTERS]; /* Suppress Trigger Control Register n */
 	u8 reserved3[0xa0-0x78];
 	u32 wmkr[NUM_WATERMARK_REGISTERS]; /* Target Space Water Mark Register n */
-	u8 reserved4[0x1000-0xb0];
-
+	u32 sbcsr;	/* Slave bus Control Status Register */
+	u32 sbrar;	/* Slave bus Read Access Register */
+	u8 reserved4[0x1000-0xb8];
 } PACKED;
 CTASSERT(sizeof(struct snpc_v2) == NPC_STRUCT_SIZE);
 

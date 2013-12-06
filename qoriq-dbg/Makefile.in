@@ -235,6 +235,8 @@ EXTRA_DIST = \
 	module/Makefile.in \
 	module/ccsr_bman.c \
 	module/ccsr_bman.h \
+	module/ccsr_devcfg.c \
+	module/ccsr_devcfg.h \
 	module/ccsr_fman.c \
 	module/ccsr_fman.h \
 	module/ccsr_qman.c \
@@ -267,6 +269,8 @@ EXTRA_DIST = \
 	module/dcsr_ocn.h \
 	module/dcsr_rcpm.c \
 	module/dcsr_rcpm.h \
+	module/ccsr_rcpm.c \
+	module/ccsr_rcpm.h \
 	module/qoriq_dbg.c \
 	module/qoriq_dbg.h \
 	module/README

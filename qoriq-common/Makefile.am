@@ -24,8 +24,10 @@ SUBDIRS= \
 	
 EXTRA_DIST= \
 	ccsr_bman_v1.h \
+	ccsr_devcfg_v2.h \
 	ccsr_fman_v1.h \
 	ccsr_qman_v1.h \
+	ccsr_rcpm_v2.h \
 	common.h \
 	dcsr_corenet_v1.h \
 	dcsr_cpu_v1.h \
@@ -38,6 +40,8 @@ EXTRA_DIST= \
 	dcsr_npc_v1.h \
 	dcsr_npc_v2.h \
 	dcsr_nxc_v1.h \
+	dcsr_nxc_v2.h \
 	dcsr_ocn_v1.h \
 	dcsr_rcpm_v1.h \
+	dcsr_rcpm_v2.h \
 	pmr_cpu_v1.h

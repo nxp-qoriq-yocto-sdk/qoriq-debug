@@ -25,11 +25,15 @@
 #include "dbg_private.h"
 #include "dbg_device.h"
 #include "dcsr_nxc_v1.h"
+#include "dcsr_nxc_v2.h"
 
 #define DEBUGFS_NXC_NAME "nxc"
 
 /* Driver Initialization Functions */
 extern int dcsr_nxc_init(struct dentry *parent_dentry,
+					struct dbg_device *dev);
+/* Driver Initialization Functions */
+extern int dcsr_nxc_v2_init(struct dentry *parent_dentry,
 					struct dbg_device *dev);
 
 #endif  /* DCSR_NXC_H */

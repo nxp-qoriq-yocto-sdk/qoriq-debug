@@ -201,6 +201,11 @@ int ccsr_fman_init(struct dentry *parent_dentry, struct dbg_device *dev)
 
 	/* FMan Parser */
 	DBGFS_CREATE_RW_X32("fmpr_pdc", current_dentry, &ptr->parser.fmpr_pdc);
+	for (i = 0; i < FMAN_NUM_SOFT_EXAM_PARAM_ARRAY; ++i) {
+		sprintf(reg_name, "fmpr_sxpaw%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->parser.fmpr_sxpaw[i]);
+	}
 	for (i = 0; i < FMAN_NUM_DEBUG_FLOWS; ++i) {
 		sprintf(reg_name, "fmpr_pd%ctes", flowchar[i]);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,

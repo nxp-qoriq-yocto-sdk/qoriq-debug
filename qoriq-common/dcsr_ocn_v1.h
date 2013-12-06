@@ -34,8 +34,9 @@
 
 /** structure defines the memory map of the OCN control block */
 struct ocn {
-	u32 ocdicr0; /* ocn control register */
-	u32 reserved1[0x3f];
+	u32 ocdicr0; /* ocn control register 0 */
+	u32 ocdicr1; /* ocn control register 1 (v2 only) */
+	u32 reserved1[0x3e];
 	u32 ocrimcr[OCN_NUM_REF_INPUT_MUX];
 	u32 reserved2[0x3c];
 	u32 ocgimcr[OCN_NUM_GEN_INPUT_MUX];

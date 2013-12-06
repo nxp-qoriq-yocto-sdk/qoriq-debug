@@ -34,6 +34,8 @@ $(MODULE_NAME)-objs :=  \
 			ccsr_bman.o \
 			ccsr_fman.o \
 			ccsr_qman.o \
+			ccsr_rcpm.o \
+			ccsr_devcfg.o \
 			dbg_cpu.o \
 			dbg_pmr.o \
 			dbg_spr.o \

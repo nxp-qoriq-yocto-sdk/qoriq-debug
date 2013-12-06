@@ -28,6 +28,7 @@
 #define FMAN_NUM_DEBUG_FLOWS	3
 #define FMAN_NUM_DEBUG_TRAPS	4
 #define FMAN_NUM_DEBUG_EVENT_TRAPS	5
+#define FMAN_NUM_SOFT_EXAM_PARAM_ARRAY 16
 /* Number of 32bit registers to represent 128bit FD value */
 #define FMAN_NUM_REGS_PER_FRAME		4
 
@@ -283,16 +284,19 @@ struct fmpr_debug_flow_trap {
 };
 /* FMan parser */
 struct fmpr {
-	u8 reserved1[0x8ec];
+	u8 reserved1[0x800];
+	/* FMPR_SXPAWx Parser Soft Examination Parameter Array Word x */
+	u32 fmpr_sxpaw[FMAN_NUM_SOFT_EXAM_PARAM_ARRAY];
+	u8 reserved2[0x8ec-0x840];
 	/* FMPR_PDxTES Parser Debug Flow x Trap event Statistic Register */
 	u32 fmpr_pdtes[FMAN_NUM_DEBUG_FLOWS];
-	u8 reserved2[0x8];
+	u8 reserved3[0x8];
 	/* FMPR_PDC Parser Debug Control Register */
 	u32 fmpr_pdc;
 	/* FMPR_PDxTn[CVM] Parser Debug Flow x Trap n Registers */
 	struct fmpr_debug_flow_trap
 		debug_flow_trap[FMAN_NUM_DEBUG_FLOWS][FMAN_NUM_DEBUG_TRAPS];
-	u8 reserved3[0x66c];
+	u8 reserved4[0x66c];
 } PACKED;
 CTASSERT(sizeof(struct fmpr) == 0x1000);
 

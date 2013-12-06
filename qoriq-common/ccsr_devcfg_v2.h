@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -18,28 +18,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DBG_DEBUGFS_H
-#define DBG_DEBUGFS_H
 
-#include "dbg_device.h"
-#include "dbg_cpu.h"
-#include "ccsr_bman.h"
-#include "ccsr_fman.h"
-#include "ccsr_qman.h"
-#include "ccsr_devcfg.h"
-#include "ccsr_rcpm.h"
-#include "dcsr_corenet.h"
-#include "dcsr_ddr.h"
-#include "dcsr_dpaa.h"
-#include "dcsr_epu.h"
-#include "dcsr_nal.h"
-#include "dcsr_npc.h"
-#include "dcsr_npc_trace.h"
-#include "dcsr_nxc.h"
-#include "dcsr_ocn.h"
-#include "dcsr_rcpm.h"
+#ifndef CCSR_DEVCFG_V2_H
+#define CCSR_DEVCFG_V2_H
 
-#define DRIVER_NAME "qoriq-dbg"
-#define DBGFS_ROOT_NAME "qoriq-dbg"
+#include "common.h"
 
-#endif /* DBG_DEBUGFS_H */
+#define DCFG_V2_STRUCT_SIZE		0x1000
+
+/* number of RCW words */
+#define DEVCFG_NUM_RCW_WORDS		16
+
+/* structure defines the memory map of the Device Configuration block */
+struct device_cfg_v2 {
+	u8 reserved0[0xA0];
+	/* Processor Version Register */
+	u32 pvr;
+	/* System Version Register */
+	u32 svr;
+	u8 reserved1[0x100 - 0xA8];
+	/* Reset Control Word */
+	u32 rcw[DEVCFG_NUM_RCW_WORDS];
+	u8 reserved2[0x1000-0x140];
+} PACKED;
+CTASSERT(sizeof(struct device_cfg_v2) == DCFG_V2_STRUCT_SIZE);
+
+#endif  /* CCSR_DEVCFG_V2_H */

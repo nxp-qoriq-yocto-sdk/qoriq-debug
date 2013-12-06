@@ -238,23 +238,23 @@ CTASSERT(sizeof(struct cndc_comp) == 0x10);
 
 /* CNDC memory map section 1 in the DCSR block */
 struct cndc_1 {
-	u32 reserved1[0x18];
+	u8  reserved1[0x60];
 	u32 ctarm;
 	u32 ctcr1;
-	u32 reserved2[0x06];
+	u8  reserved2[0x80-0x68];
 	u32 cwmsk;
-	u32 reserved7[0x2];
+	u8  reserved3[0x8c-0x84];
 	u32 ctscr;
-	u32 reserved3[0x1c];
+	u8  reserved4[0x100-0x90];
 
 	struct cndc_comp comp[CNDC_NO_EVENT_COMPARATORS];
-	u32 reserved4[0x1B0];
+	u8  reserved5[0x800-0x140];
 
 	u32 cpmsr1;
-	u32 reserved5[0x03];
+	u8  reserved6[0x810-0x804];
 
 	u32 cprescr[CNDC_NO_REF_EVENTS];
-	u32 reserved6[0x1F8];
+	u8  reserved7[0x1000-0x820];
 } PACKED;
 CTASSERT(sizeof(struct cndc_1) == CNDC1_STRUCT_SIZE);
 
@@ -266,7 +266,7 @@ struct cndc_addr_comp {
 
 /* CNDC memory map section 2 */
 struct cndc_2 {
-	u32 reserved1[0x3C0];
+	u8  reserved1[0xf00];
 	/* CoreNetCCM_AP Debug Control Registers */
 	u32 cdbcr0; /* enables CDACs */
 	u32 cdbcr1; /* CDBCR1 - config for CDACs 1/2*/
@@ -278,19 +278,20 @@ struct cndc_2 {
 
 	/*Transaction Attribute Compare Registers */
 	u32 ctac[CNDC_NO_TRANS_COMPARATORS];
-	u32 reserved2[0x4];
+	u8  reserved2[0xf50-0xf40];
 
 	/* Data Value Compare Registers */
 	u32 cdvchh;
 	u32 cdvchl;
 	u32 cdvclh;
 	u32 cdvcll;
-	u32 reserved3[0x8];
-	u32 perfmon_enable;
+	u32 cdvcsel; /* CNDC v2 only */
+	u8  reserved3[0xf80-0xf64];
+	u32 perfmon1; /* CNDC V2 only */
 	u32 reserved4[0x3];
 
 	/* Performance Monitor Control Register */
-	u32 cdpmcr;
+	u32 cdpmcr; /* CNDC v1 only */
 	u32 reserved5[0x1B];
 } PACKED;
 CTASSERT(sizeof(struct cndc_2) == CNDC2_STRUCT_SIZE);

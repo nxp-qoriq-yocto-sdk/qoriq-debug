@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010 - 2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -25,11 +25,16 @@
 #include "dbg_private.h"
 #include "dbg_device.h"
 #include "dcsr_rcpm_v1.h"
+#include "dcsr_rcpm_v2.h"
 
 #define DEBUGFS_RCPM_NAME "rcpm"
 
 /* Driver Initialization Functions */
 extern int dcsr_rcpm_init(struct dentry *parent_dentry,
+					struct dbg_device *dev);
+
+/* Driver Initialization Functions */
+extern int dcsr_rcpm_v2_init(struct dentry *parent_dentry,
 					struct dbg_device *dev);
 
 #endif  /* DCSR_RCPM_H */

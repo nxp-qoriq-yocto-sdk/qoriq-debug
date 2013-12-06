@@ -48,3 +48,32 @@ int dcsr_ocn_init(struct dentry *parent_dentry, struct dbg_device *dev)
 
 	return 0;
 }
+
+/* Driver Initialization Function */
+int dcsr_ocn_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
+{
+	int i;
+	struct dentry *current_dentry;
+	struct dentry *de;
+	struct ocn *ptr = (struct ocn *)dev->mem_ptr[0];
+	char reg_name[DBFS_REG_NAME_LEN];
+
+	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev,
+					DEBUGFS_OCN_NAME);
+
+	/* Debug status control */
+	DBGFS_CREATE_RW_X32("ocdicr0", current_dentry, &ptr->ocdicr0);
+	DBGFS_CREATE_RW_X32("ocdicr1", current_dentry, &ptr->ocdicr1);
+	for (i = 0; i < OCN_NUM_REF_INPUT_MUX; ++i) {
+		sprintf(reg_name, "ocrimcr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->ocrimcr[i]);
+	}
+	for (i = 0; i < OCN_NUM_GEN_INPUT_MUX; ++i) {
+		sprintf(reg_name, "ocgimcr%d", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->ocgimcr[i]);
+	}
+
+	return 0;
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -18,28 +18,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DBG_DEBUGFS_H
-#define DBG_DEBUGFS_H
 
-#include "dbg_device.h"
-#include "dbg_cpu.h"
-#include "ccsr_bman.h"
-#include "ccsr_fman.h"
-#include "ccsr_qman.h"
 #include "ccsr_devcfg.h"
-#include "ccsr_rcpm.h"
-#include "dcsr_corenet.h"
-#include "dcsr_ddr.h"
-#include "dcsr_dpaa.h"
-#include "dcsr_epu.h"
-#include "dcsr_nal.h"
-#include "dcsr_npc.h"
-#include "dcsr_npc_trace.h"
-#include "dcsr_nxc.h"
-#include "dcsr_ocn.h"
-#include "dcsr_rcpm.h"
 
-#define DRIVER_NAME "qoriq-dbg"
-#define DBGFS_ROOT_NAME "qoriq-dbg"
+/* Driver Initialization Function */
+int ccsr_devcfg_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
+{
+	int i;
+	struct dentry *current_dentry;
+	struct dentry *de;
+	struct device_cfg_v2 *ptr = (struct device_cfg_v2 *)dev->mem_ptr[0];
+	char reg_name[DBFS_REG_NAME_LEN];
 
-#endif /* DBG_DEBUGFS_H */
+	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev, DEBUGFS_DEVCFG_NAME);
+
+	DBGFS_CREATE_RO_X32("pvr", current_dentry, &ptr->pvr);
+	DBGFS_CREATE_RO_X32("svr", current_dentry, &ptr->svr);
+
+	for (i = 0; i < DEVCFG_NUM_RCW_WORDS; ++i) {
+		sprintf(reg_name, "rcw%d", i);
+		DBGFS_CREATE_RO_X32(reg_name, current_dentry, &ptr->rcw[i]);
+	}
+
+	return 0;
+}

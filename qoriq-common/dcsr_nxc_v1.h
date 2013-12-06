@@ -75,8 +75,8 @@ CTASSERT(sizeof(struct nxc_hit_gen) == NXC_HIT_GEN_STRUCT_SIZE);
 
 /* structure defines the memory map of the NXC control block */
 struct nxc {
-	u32 nxccr0; /* Nearend Trace Message Control Register 0 */
-	u32 reserved1[0x3F];
+	u32 nxccr0; /* Nexus Trace Message Control Register 0 */
+	u8  reserved1[0x100-0x004];
 
 	u32 fccfg0; /* NXC Filter Control Configuration Register 0 */
 	u32 fccfg1; /* NXC Filter Control Configuration Register 1 */

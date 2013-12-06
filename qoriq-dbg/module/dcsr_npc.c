@@ -109,6 +109,8 @@ int dcsr_cnpc_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	DBGFS_CREATE_RW_X32("wmkr2", current_dentry, &ptr->wmkr[1]);
 	DBGFS_CREATE_RW_X32("wmkr3", current_dentry, &ptr->wmkr[2]);
 	DBGFS_CREATE_RW_X32("wmkr4", current_dentry, &ptr->wmkr[3]);
+	DBGFS_CREATE_RW_X32("sbcsr", current_dentry, &ptr->sbcsr);
+	DBGFS_CREATE_RO_X32("sbrar", current_dentry, &ptr->sbrar);
 	DBGFS_CREATE_RW_X32("mccr", current_dentry, &ptr->mccr);
 	DBGFS_CREATE_RW_X32("mcsr1", current_dentry, &ptr->mma[0].mcsr);
 	DBGFS_CREATE_RW_X32("mmar1hi", current_dentry, &ptr->mma[0].mmarhi);
@@ -165,6 +167,8 @@ int dcsr_snpc_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	DBGFS_CREATE_RW_X32("wmkr2", current_dentry, &ptr->wmkr[1]);
 	DBGFS_CREATE_RW_X32("wmkr3", current_dentry, &ptr->wmkr[2]);
 	DBGFS_CREATE_RW_X32("wmkr4", current_dentry, &ptr->wmkr[3]);
+	DBGFS_CREATE_RW_X32("sbcsr", current_dentry, &ptr->sbcsr);
+	DBGFS_CREATE_RO_X32("sbrar", current_dentry, &ptr->sbrar);
 
 	return 0;
 }

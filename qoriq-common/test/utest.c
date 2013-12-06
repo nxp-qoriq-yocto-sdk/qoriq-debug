@@ -37,6 +37,7 @@ typedef uint8_t u8;
 
 #include "ccsr_fman_v1.h"
 #include "ccsr_qman_v1.h"
+#include "ccsr_rcpm_v2.h"
 #include "dcsr_corenet_v1.h"
 #include "dcsr_cpu_v1.h"
 #include "dcsr_ddr_v1.h"
@@ -49,6 +50,7 @@ typedef uint8_t u8;
 #include "dcsr_nxc_v1.h"
 #include "dcsr_ocn_v1.h"
 #include "dcsr_rcpm_v1.h"
+#include "dcsr_rcpm_v2.h"
 #include "pmr_cpu_v1.h"
 
 /* this function will be generated */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010 - 2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -18,28 +18,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DBG_DEBUGFS_H
-#define DBG_DEBUGFS_H
 
+#ifndef CCSR_RCPM_H
+#define CCSR_RCPM_H
+
+#include "dbg_private.h"
 #include "dbg_device.h"
-#include "dbg_cpu.h"
-#include "ccsr_bman.h"
-#include "ccsr_fman.h"
-#include "ccsr_qman.h"
-#include "ccsr_devcfg.h"
-#include "ccsr_rcpm.h"
-#include "dcsr_corenet.h"
-#include "dcsr_ddr.h"
-#include "dcsr_dpaa.h"
-#include "dcsr_epu.h"
-#include "dcsr_nal.h"
-#include "dcsr_npc.h"
-#include "dcsr_npc_trace.h"
-#include "dcsr_nxc.h"
-#include "dcsr_ocn.h"
-#include "dcsr_rcpm.h"
+#include "ccsr_rcpm_v2.h"
 
-#define DRIVER_NAME "qoriq-dbg"
-#define DBGFS_ROOT_NAME "qoriq-dbg"
+#define DEBUGFS_RCPM2_NAME "rcpm2"
 
-#endif /* DBG_DEBUGFS_H */
+/* Driver Initialization Functions */
+extern int ccsr_rcpm2_init(struct dentry *parent_dentry,
+					struct dbg_device *dev);
+
+#endif  /* CCSR_RCPM_H */

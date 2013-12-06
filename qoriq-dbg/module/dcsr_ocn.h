@@ -31,5 +31,8 @@
 /* Driver Initialization Functions */
 extern int dcsr_ocn_init(struct dentry *parent_dentry,
 					struct dbg_device *dev);
+/* Driver Initialization Functions */
+extern int dcsr_ocn_v2_init(struct dentry *parent_dentry,
+					struct dbg_device *dev);
 
 #endif  /* DCSR_OCN_H */

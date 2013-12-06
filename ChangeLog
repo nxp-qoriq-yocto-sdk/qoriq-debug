@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+# Copyright (C) 2010, 2011, 2012 2013 Freescale Semiconductor, Inc.
 # All rights reserved.
 #
 # This software may be distributed under the terms of the
@@ -18,6 +18,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+
+Qoriq-debug version 1.4.3
+--------------------------
+Added support for additional T4240rev2 and B4860rev2 debug components.
+Added FMAN, BMAN, QMAN, DDR, NAL, NXC, Corenet, OCN, Device Config.
+
+Qoriq-debug version 1.4.2
+--------------------------
+Added C-/S-NPC(rev2) Slave Memory bus access registers.
+Added RCPM(rev2)
+
+Qoriq-debug version 1.4.1
+--------------------------
+Added DPDC Generation 2 for T4/B4
+Modified code to determine platform based on device tree entries
 
 Qoriq-debug version 1.4.0
 --------------------------
