@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010-2013 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -166,6 +166,7 @@ static int dcsr_probe(struct platform_device *pdev)
 		add_compatible_devices("fsl,dcsr-nxc", DEBUGFS_NXC_NAME, NULL, dcsr_nxc_init);
 		add_compatible_devices("fsl,dcsr-ocn", DEBUGFS_OCN_NAME, NULL, dcsr_ocn_init);
 		add_compatible_devices("fsl,dcsr-rcpm", DEBUGFS_RCPM_NAME, NULL, dcsr_rcpm_init);
+		add_compatible_devices("fsl,qoriq-device-config-1.0", DEBUGFS_DEVCFG_NAME, NULL, ccsr_devcfg_init);
 	}
 	/* common devices */
 	add_compatible_devices("fsl,dcsr-nal", DEBUGFS_NAL_NAME, NULL, dcsr_nal_init);

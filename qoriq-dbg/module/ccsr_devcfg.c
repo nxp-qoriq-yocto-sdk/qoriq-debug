@@ -22,6 +22,12 @@
 #include "ccsr_devcfg.h"
 
 /* Driver Initialization Function */
+int ccsr_devcfg_init(struct dentry *parent_dentry, struct dbg_device *dev)
+{
+	return ccsr_devcfg_v2_init(parent_dentry, dev);
+}
+
+/* Driver Initialization Function */
 int ccsr_devcfg_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
 {
 	int i;

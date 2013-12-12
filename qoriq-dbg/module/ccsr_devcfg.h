@@ -29,6 +29,8 @@
 #define DEBUGFS_DEVCFG_NAME "dcfg"
 
 /* Driver Initialization Functions */
+extern int ccsr_devcfg_init(struct dentry *parent_dentry,
+				struct dbg_device *dev);
 extern int ccsr_devcfg_v2_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
