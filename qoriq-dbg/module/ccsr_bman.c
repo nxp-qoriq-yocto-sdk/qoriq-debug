@@ -77,8 +77,8 @@ int ccsr_bman_init(struct dentry *parent_dentry, struct dbg_device *dev)
 
 	DBGFS_CREATE_RW_X32("bman_escr", current_dentry,
 			&ptr->bman_escr);
-	DBGFS_CREATE_RO_X32("bman_esir", current_dentry,
-			&ptr->bman_esir);
+	DBGFS_CREATE_RO_X32("bman_ecir", current_dentry,
+			&ptr->bman_ecir);
 	DBGFS_CREATE_RO_X32("bman_eadr", current_dentry,
 			&ptr->bman_eadr);
 
@@ -98,6 +98,109 @@ int ccsr_bman_init(struct dentry *parent_dentry, struct dbg_device *dev)
 			&ptr->bman_sbec0);
 	DBGFS_CREATE_RO_X32("bman_sbec1", current_dentry,
 			&ptr->bman_sbec1);
+
+	DBGFS_CREATE_RO_X32("bman_ip_rev_1", current_dentry,
+			&ptr->bman_ip_rev_1);
+	DBGFS_CREATE_RO_X32("bman_ip_rev_2", current_dentry,
+			&ptr->bman_ip_rev_2);
+	DBGFS_CREATE_RW_X32("fbpr_bare", current_dentry,
+			&ptr->fbpr_bare);
+	DBGFS_CREATE_RW_X32("fbpr_bar", current_dentry,
+			&ptr->fbpr_bar);
+	DBGFS_CREATE_RW_X32("fbpr_ar", current_dentry,
+			&ptr->fbpr_ar);
+	DBGFS_CREATE_RO_X32("bman_srcidr", current_dentry,
+			&ptr->bman_srcidr);
+	DBGFS_CREATE_RW_X32("bman_liodnr", current_dentry,
+			&ptr->bman_liodnr);
+
+	DBGFS_CREATE_RW_X32("bman_err_isr", current_dentry,
+			&ptr->bman_err_isr);
+	DBGFS_CREATE_RW_X32("bman_err_ier", current_dentry,
+			&ptr->bman_err_ier);
+	DBGFS_CREATE_RW_X32("bman_err_isdr", current_dentry,
+			&ptr->bman_err_isdr);
+	DBGFS_CREATE_RW_X32("bman_err_iir", current_dentry,
+			&ptr->bman_err_iir);
+	DBGFS_CREATE_RW_X32("bman_err_ifr", current_dentry,
+			&ptr->bman_err_ifr);
+
+	return 0;
+}
+
+/* Driver Initialization Function */
+int ccsr_bman_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
+{
+	int i;
+	struct dentry *current_dentry;
+	struct dentry *de;
+	struct bman_v2 *ptr = (struct bman_v2 *)dev->mem_ptr[0];
+	char reg_name[DBFS_REG_NAME_LEN];
+
+	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev, DEBUGFS_BMAN_NAME);
+
+	for (i = 0; i < BMAN_NUM_POOLS; ++i) {
+		sprintf(reg_name, "bman_pool%d_swdet", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_pool_swdet[i]);
+		sprintf(reg_name, "bman_pool%d_hwdet", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_pool_hwdet[i]);
+		sprintf(reg_name, "bman_pool%d_swdxt", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_pool_swdxt[i]);
+		sprintf(reg_name, "bman_pool%d_hwdxt", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_pool_hwdxt[i]);
+		sprintf(reg_name, "bman_pool%d_sdcnt", i);
+		DBGFS_CREATE_RO_X32(reg_name, current_dentry,
+				&ptr->bman_pool_sdcnt[i]);
+		sprintf(reg_name, "bman_pool%d_hdcnt", i);
+		DBGFS_CREATE_RO_X32(reg_name, current_dentry,
+				&ptr->bman_pool_hdcnt[i]);
+		sprintf(reg_name, "bman_pool%d_content", i);
+		DBGFS_CREATE_RO_X32(reg_name, current_dentry,
+				&ptr->bman_pool_content[i]);
+		sprintf(reg_name, "bman_pool%d_hdptr", i);
+		DBGFS_CREATE_RO_X32(reg_name, current_dentry,
+				&ptr->bman_pool_hdptr[i]);
+	}
+
+	DBGFS_CREATE_RO_X32("fbpr_fpc", current_dentry,
+			&ptr->fbpr_fpc);
+	DBGFS_CREATE_RW_X32("fbpr_fp_lwit", current_dentry,
+			&ptr->fbpr_fp_lwit);
+	DBGFS_CREATE_RO_X32("fbpr_hdptr", current_dentry,
+			&ptr->fbpr_hdptr);
+
+	for (i = 0; i < BMAN_NUM_PERF_MONITORS; ++i) {
+		sprintf(reg_name, "bman_cmd_pm%d_cfg", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_cmd_pm_cfg[i]);
+		sprintf(reg_name, "bman_fl_pm%d_cfg", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_fl_pm_cfg[i]);
+		sprintf(reg_name, "bman_cmd_pm%d_cfg_cfifo", i);
+		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
+				&ptr->bman_cmd_pm_cfg_cfifo[i]);
+	}
+
+	DBGFS_CREATE_RO_X32("bman_ecir", current_dentry,
+			&ptr->bman_ecir);
+
+	DBGFS_CREATE_RW_X32("bman_sbet", current_dentry,
+			&ptr->bman_sbet);
+	DBGFS_CREATE_RO_X32("bman_cecr", current_dentry,
+			&ptr->bman_cecr);
+	DBGFS_CREATE_RO_X32("bman_cear", current_dentry,
+			&ptr->bman_cear);
+	DBGFS_CREATE_RO_X32("bman_aecr", current_dentry,
+			&ptr->bman_aecr);
+	DBGFS_CREATE_RO_X32("bman_aear", current_dentry,
+			&ptr->bman_aear);
+
+	DBGFS_CREATE_RO_X32("bman_sbec0", current_dentry,
+			&ptr->bman_sbec0);
 
 	DBGFS_CREATE_RO_X32("bman_ip_rev_1", current_dentry,
 			&ptr->bman_ip_rev_1);

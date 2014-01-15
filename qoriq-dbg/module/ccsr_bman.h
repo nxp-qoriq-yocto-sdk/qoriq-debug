@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2012-2014 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -25,11 +25,16 @@
 #include "dbg_private.h"
 #include "dbg_device.h"
 #include "ccsr_bman_v1.h"
+#include "ccsr_bman_v2.h"
 
 #define DEBUGFS_BMAN_NAME "bman"
 
 /* Driver Initialization Functions */
 extern int ccsr_bman_init(struct dentry *parent_dentry,
+				struct dbg_device *dev);
+
+/* Driver Initialization Functions */
+extern int ccsr_bman_v2_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
 #endif /* CCSR_BMAN_H */

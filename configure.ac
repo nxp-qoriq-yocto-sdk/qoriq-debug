@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010, 2011, 2012, 2013 Freescale Semiconductor, Inc.
+# Copyright (C) 2010-2014 Freescale Semiconductor, Inc.
 # All rights reserved.
 #
 # This software may be distributed under the terms of the
@@ -22,7 +22,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([qoriq-debug], [1.4.4], [freescale.com])
+AC_INIT([qoriq-debug], [1.4.5], [freescale.com])
 
 
 AC_CANONICAL_SYSTEM

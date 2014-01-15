@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2014 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -19,36 +19,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCSR_BMAN_V1_H
-#define CCSR_BMAN_V1_H
+#ifndef CCSR_BMAN_V2_H
+#define CCSR_BMAN_V2_H
 
 #include "common.h"
 
 /* number of buffer pools */
-#define BMAN_NUM_POOLS			64
+#define BMAN_V2_NUM_POOLS		64
 /* number of performance monitors */
-#define BMAN_NUM_PERF_MONITORS		8
+#define BMAN_V2_NUM_PERF_MONITORS	8
 /* Number of words containing error data */
-#define BMAN_NUM_DATA_ERROR_WORDS	8
+#define BMAN_V2_NUM_DATA_ERROR_WORDS	8
 
 /* BMAN configuration registers */
-struct bman {
+struct bman_v2 {
 	/* Software portal depletion entry threshold */
-	u32 bman_pool_swdet[BMAN_NUM_POOLS];
+	u32 bman_pool_swdet[BMAN_V2_NUM_POOLS];
 	/* Hardware portal depletion entry threshold */
-	u32 bman_pool_hwdet[BMAN_NUM_POOLS];
+	u32 bman_pool_hwdet[BMAN_V2_NUM_POOLS];
 	/* Software portal depletion exit threshold */
-	u32 bman_pool_swdxt[BMAN_NUM_POOLS];
+	u32 bman_pool_swdxt[BMAN_V2_NUM_POOLS];
 	/* Hardware portal depletion exit threshold */
-	u32 bman_pool_hwdxt[BMAN_NUM_POOLS];
+	u32 bman_pool_hwdxt[BMAN_V2_NUM_POOLS];
 	/* Software portal depletion count */
-	u32 bman_pool_sdcnt[BMAN_NUM_POOLS];
+	u32 bman_pool_sdcnt[BMAN_V2_NUM_POOLS];
 	/* Hardware portal depletion count */
-	u32 bman_pool_hdcnt[BMAN_NUM_POOLS];
+	u32 bman_pool_hdcnt[BMAN_V2_NUM_POOLS];
 	/* Snapshot of content in pool N */
-	u32 bman_pool_content[BMAN_NUM_POOLS];
+	u32 bman_pool_content[BMAN_V2_NUM_POOLS];
 	/* Head pointer for pool N */
-	u32 bman_pool_hdptr[BMAN_NUM_POOLS];
+	u32 bman_pool_hdptr[BMAN_V2_NUM_POOLS];
 
 	/* Free Buffer Proxy Record registers */
 	/* Free pool count */
@@ -61,33 +61,34 @@ struct bman {
 
 	/* Performance Monitor Configuration */
 	/* Command performance monitor configuration */
-	u32 bman_cmd_pm_cfg[BMAN_NUM_PERF_MONITORS];
+	u32 bman_cmd_pm_cfg[BMAN_V2_NUM_PERF_MONITORS];
 	/* Free list performance monitor configuration */
-	u32 bman_fl_pm_cfg[BMAN_NUM_PERF_MONITORS];
-	u8 reserved2[0xA00-0x940];
+	u32 bman_fl_pm_cfg[BMAN_V2_NUM_PERF_MONITORS];
+	/* Free list performance monitor configuration */
+	u32 bman_cmd_pm_cfg_cfifo[BMAN_V2_NUM_PERF_MONITORS];
+	u8 reserved2[0xA00-0x960];
 
 	/* Error capture registers */
-	/* Error capture status register */
-	u32 bman_escr;
+	u8  reserved3[0xA04-0xA00];
 	/* Error capture information register */
 	u32 bman_ecir;
-	/* ECC error address register */
-	u32 bman_eadr;
-	u32 reserved3;
-	/* ECC error data register */
-	u32 bman_edata[BMAN_NUM_DATA_ERROR_WORDS];
+	u8 reserved4[0xA30-0xA08];
 	/* Single bit ECC error threshold register */
 	u32 bman_sbet;
-	/* Error fetch capture register */
-	u32 bman_efcr;
-	/* Error fetch address register */
-	u32 bman_efar;
-	u8 reserved4[0xA80-0xA3C];
+	/* Corruption error capture register */
+	u32 bman_cecr;
+	/* Corruption error address register */
+	u32 bman_cear;
+	u8 reserved0[0xA44-0xA3C];
+	/* Access error capture register */
+	u32 bman_aecr;
+	/* Access error address register */
+	u32 bman_aear;
+	u8 reserved5[0xA80-0xA4C];
+
 	/* Single bit ECC error count 0 register */
 	u32 bman_sbec0;
-	/* Single bit ECC error count 1 register */
-	u32 bman_sbec1;
-	u8 reserved5[0xBF8-0xA88];
+	u8 reserved6[0xBF8-0xA84];
 
 	/* ID/Revision registers */
 	/* Bman IP Block 1 register */
@@ -100,15 +101,15 @@ struct bman {
 	u32 fbpr_bare;
 	/* Data structure base address register */
 	u32 fbpr_bar;
-	u8 reserved6[0xC10-0xC08];
+	u8 reserved7[0xC10-0xC08];
 	/* Data structure attributes register */
 	u32 fbpr_ar;
-	u8 reserved7[0xD04-0xC14];
+	u8 reserved8[0xD04-0xC14];
 	/* Bman Source ID register */
 	u32 bman_srcidr;
 	/* Bman Logical I/O device number register */
 	u32 bman_liodnr;
-	u8 reserved8[0xE00-0xD0C];
+	u8 reserved9[0xE00-0xD0C];
 
 	/* Bman Interrupt and Error registers */
 	/* Error interrupt status register */
@@ -121,8 +122,12 @@ struct bman {
 	u32 bman_err_iir;
 	/* Error interrupt force register */
 	u32 bman_err_ifr;
-	u8 reserved9[0x1000-0xe14];
+	u8 reserved10[0x1000-0xe14];
 } PACKED;
-CTASSERT(sizeof(struct bman) == 0x1000);
+/* check addresses and size */
+CTASSERT(offsetof(struct bman_v2, bman_ecir) == 0xA04);
+CTASSERT(offsetof(struct bman_v2, bman_sbet) == 0xA30);
+CTASSERT(offsetof(struct bman_v2, bman_ip_rev_1) == 0xBF8);
+CTASSERT(sizeof(struct bman_v2) == 0x1000);
 
-#endif /* CCSR_BMAN_V1_H */
+#endif /* CCSR_BMAN_V2_H */

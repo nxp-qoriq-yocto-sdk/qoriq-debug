@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Freescale Semiconductor, Inc.
+ * Copyright (C) 2010-2014 Freescale Semiconductor, Inc.
  * All rights reserved.
  *
  * This software may be distributed under the terms of the
@@ -25,11 +25,16 @@
 #include "dbg_private.h"
 #include "dbg_device.h"
 #include "ccsr_qman_v1.h"
+#include "ccsr_qman_v2.h"
 
 #define DEBUGFS_QMAN_NAME "qman"
 
 /* Driver Initialization Functions */
 extern int ccsr_qman_init(struct dentry *parent_dentry,
+				struct dbg_device *dev);
+
+/* Driver Initialization Functions */
+extern int ccsr_qman_v2_init(struct dentry *parent_dentry,
 				struct dbg_device *dev);
 
 #endif /* CCSR_QMAN_H */
