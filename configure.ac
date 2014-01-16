@@ -22,7 +22,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([qoriq-debug], [1.4.5], [freescale.com])
+AC_INIT([qoriq-debug], [1.4.6], [freescale.com])
 
 
 AC_CANONICAL_SYSTEM

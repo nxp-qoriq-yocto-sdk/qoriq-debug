@@ -23,6 +23,7 @@
 #include <linux/debugfs.h>
 #include <linux/slab.h>
 #include <linux/err.h>
+#include <linux/of_address.h>
 #include <linux/of_platform.h>
 #include <linux/io.h>
 
