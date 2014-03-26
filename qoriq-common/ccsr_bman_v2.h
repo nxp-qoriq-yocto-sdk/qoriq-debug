@@ -28,8 +28,6 @@
 #define BMAN_V2_NUM_POOLS		64
 /* number of performance monitors */
 #define BMAN_V2_NUM_PERF_MONITORS	8
-/* Number of words containing error data */
-#define BMAN_V2_NUM_DATA_ERROR_WORDS	8
 
 /* BMAN configuration registers */
 struct bman_v2 {

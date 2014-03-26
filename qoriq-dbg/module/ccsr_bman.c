@@ -139,7 +139,7 @@ int ccsr_bman_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
 
 	CREATE_CURRENT_DBGFS_DIR(parent_dentry, dev, DEBUGFS_BMAN_NAME);
 
-	for (i = 0; i < BMAN_NUM_POOLS; ++i) {
+	for (i = 0; i < BMAN_V2_NUM_POOLS; ++i) {
 		sprintf(reg_name, "bman_pool%d_swdet", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
 				&ptr->bman_pool_swdet[i]);
@@ -173,7 +173,7 @@ int ccsr_bman_v2_init(struct dentry *parent_dentry, struct dbg_device *dev)
 	DBGFS_CREATE_RO_X32("fbpr_hdptr", current_dentry,
 			&ptr->fbpr_hdptr);
 
-	for (i = 0; i < BMAN_NUM_PERF_MONITORS; ++i) {
+	for (i = 0; i < BMAN_V2_NUM_PERF_MONITORS; ++i) {
 		sprintf(reg_name, "bman_cmd_pm%d_cfg", i);
 		DBGFS_CREATE_RW_X32(reg_name, current_dentry,
 				&ptr->bman_cmd_pm_cfg[i]);

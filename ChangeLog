@@ -19,6 +19,10 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+Qoriq-debug version 1.4.7
+--------------------------
+Bug fix for char buffer overrun.
+
 Qoriq-debug version 1.4.6
 --------------------------
 Added #include of_address.h to support kernel 3.13-rc3.

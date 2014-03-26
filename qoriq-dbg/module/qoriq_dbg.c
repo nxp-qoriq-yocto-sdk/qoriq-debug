@@ -38,7 +38,7 @@ static struct dentry *dbgfs_root_dentry;
 /* dbg_device list */
 static LIST_HEAD(dbg_devs);
 
-const struct of_device_id dcsr_id_table[] = {
+static const struct of_device_id dcsr_id_table[] = {
 		{ .compatible = "fsl,dcsr"},
 		{},
 };

@@ -26,7 +26,7 @@
 #include <linux/debugfs.h>
 
 /* max size of register names */
-#define DBFS_REG_NAME_LEN 16
+#define DBFS_REG_NAME_LEN 32
 
 #define DBGFS_RO_MODE	(S_IRUSR | S_IRGRP | S_IROTH)
 #define DBGFS_WO_MODE	(S_IWUSR | S_IWGRP | S_IWOTH)
